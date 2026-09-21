@@ -42,7 +42,7 @@ describe("webhook normalization + processing", () => {
     const events = await shopifyAdapter.normalizeWebhook!(payload, { integration: null, artistId: artist.id, headers });
     expect(events).toHaveLength(1);
     expect(events[0].type).toBe("shopify.order.created");
-    expect(events[0].metadata.amountCents).toBe(8500);
+    expect(events[0].metadata?.amountCents).toBe(8500);
     expect(events[0].identity?.externalUserId).toBe("8841");
 
     const first = await processWebhook({ provider: "shopify", artistId: artist.id, externalEventId: "wh-1", topic: "orders/create", payload, headers });
