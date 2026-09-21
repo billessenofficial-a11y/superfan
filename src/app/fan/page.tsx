@@ -52,8 +52,8 @@ export default async function FanHomePage() {
           description="Join an artist's fan club to start earning status, points and rewards for showing up."
           actions={
             <Button asChild variant="accent">
-              <Link href="/artists/luma-vale">
-                Explore Luma Vale <ArrowRight />
+              <Link href="/artists/drake">
+                Explore Drake <ArrowRight />
               </Link>
             </Button>
           }

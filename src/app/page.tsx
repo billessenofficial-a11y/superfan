@@ -131,7 +131,7 @@ export default async function HomePage() {
               <Link href="/login">Start building your fanbase</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
-              <Link href="/artists/luma-vale">See the demo passport</Link>
+              <Link href="/artists/drake">See the demo passport</Link>
             </Button>
           </div>
         </div>

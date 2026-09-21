@@ -131,7 +131,7 @@ export default async function ClaimPage({ params }: Props) {
           <>
             <p className="mt-1 text-sm text-muted-foreground">Sign in with your email to add it to your passport. You&apos;ll come right back here.</p>
             <div className="mt-5">
-              <LoginForm mode="fan" next={`/claim/${token}`} artistName={artist.name} demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@lumavale.demo", fanEmail: "james@superfan.demo" } : undefined} />
+              <LoginForm mode="fan" next={`/claim/${token}`} artistName={artist.name} demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@drake.demo", fanEmail: "james@superfan.demo" } : undefined} />
             </div>
           </>
         )}

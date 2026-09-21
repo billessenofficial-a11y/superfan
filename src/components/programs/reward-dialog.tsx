@@ -118,7 +118,7 @@ function RewardForm({ reward, levels, onDone }: { reward: RewardRow | null; leve
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Name" htmlFor="reward-name" error={errors.name} className="sm:col-span-2">
-          <Input id="reward-name" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Signed Afterlight vinyl" required autoFocus maxLength={120} />
+          <Input id="reward-name" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Signed Iceman vinyl" required autoFocus maxLength={120} />
         </Field>
         <Field label="Description" htmlFor="reward-description" error={errors.description} className="sm:col-span-2">
           <Textarea id="reward-description" value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="What fans get and how it is delivered." maxLength={1000} className="min-h-20" />

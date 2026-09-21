@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -35,7 +35,7 @@ export async function joinArtistAction(input: { slug: string; ref?: string | nul
   const artist = await artistOr404(slug);
 
   await db.transaction(async (tx) => {
-    const { created } = await ensureArtistFan(tx, artist.id, fan.id, { firstSource: "superfan" });
+    const { row, created } = await ensureArtistFan(tx, artist.id, fan.id, { firstSource: "superfan" });
     if (ref) {
       try {
         await recordReferral(tx, { artistId: artist.id, code: ref, referredFanId: fan.id });
@@ -44,10 +44,64 @@ export async function joinArtistAction(input: { slug: string; ref?: string | nul
       }
     }
     await tx.update(fans).set({ consentedAt: fan.consentedAt ?? new Date(), privacyPolicyVersion: PRIVACY_POLICY_VERSION }).where(eq(fans.id, fan.id));
-    const res = await ingestEvent({ artistId: artist.id, fanId: fan.id, source: "superfan", type: EVENT_TYPES.fanJoined, sourceEventId: `join:${fan.id}`, metadata: { via: ref ? "referral" : "direct" }, summary: "Joined the fan club" }, tx);
-    if (res.status === "created" || created) await track(tx, "fan_joined", { artistId: artist.id, fanId: fan.id }, { via: ref ? "referral" : "direct" });
+    // A fan who left earlier gets a fresh join event (the first one is deduped by id).
+    const [left] = row.joinedAt
+      ? []
+      : await tx
+          .select({ id: fanEvents.id })
+          .from(fanEvents)
+          .where(and(eq(fanEvents.artistId, artist.id), eq(fanEvents.fanId, fan.id), eq(fanEvents.type, EVENT_TYPES.fanLeft)))
+          .limit(1);
+    const rejoining = Boolean(left);
+    const res = await ingestEvent(
+      {
+        artistId: artist.id,
+        fanId: fan.id,
+        source: "superfan",
+        type: EVENT_TYPES.fanJoined,
+        sourceEventId: rejoining ? `rejoin:${fan.id}:${Date.now()}` : `join:${fan.id}`,
+        metadata: { via: ref ? "referral" : "direct", rejoined: rejoining },
+        summary: rejoining ? "Rejoined the fan club" : "Joined the fan club",
+      },
+      tx,
+    );
+    // Membership is what the passport checks; make sure it is set even when the join event was deduped.
+    await tx
+      .update(artistFans)
+      .set({ joinedAt: sql`coalesce(${artistFans.joinedAt}, now())` })
+      .where(and(eq(artistFans.artistId, artist.id), eq(artistFans.fanId, fan.id)));
+    if (res.status === "created" || created) await track(tx, "fan_joined", { artistId: artist.id, fanId: fan.id }, { via: ref ? "referral" : "direct", rejoined: rejoining });
   });
   redirect(`/fan/${slug}?welcome=1`);
+}
+
+/**
+ * Leave an artist's fan club. The membership row, score, points and history
+ * are kept (they are the fan's record); only `joined_at` is cleared so the
+ * passport closes and communications stop. Rejoining restores everything.
+ */
+export async function leaveArtistAction(input: { slug: string }) {
+  return act(async () => {
+    const { slug } = z.object({ slug: z.string().min(1) }).parse(input);
+    const { fan } = await requireFanContext(`/fan/${slug}`);
+    const artist = await artistOr404(slug);
+    await db.transaction(async (tx) => {
+      const [membership] = await tx
+        .select({ joinedAt: artistFans.joinedAt })
+        .from(artistFans)
+        .where(and(eq(artistFans.artistId, artist.id), eq(artistFans.fanId, fan.id)))
+        .limit(1);
+      if (!membership?.joinedAt) throw Object.assign(new Error("You are not a member of this fan club."), { code: "not_member" });
+      await tx.update(artistFans).set({ joinedAt: null }).where(and(eq(artistFans.artistId, artist.id), eq(artistFans.fanId, fan.id)));
+      await ingestEvent(
+        { artistId: artist.id, fanId: fan.id, source: "superfan", type: EVENT_TYPES.fanLeft, sourceEventId: `leave:${fan.id}:${Date.now()}`, metadata: {}, summary: "Left the fan club" },
+        tx,
+      );
+      await track(tx, "fan_left", { artistId: artist.id, fanId: fan.id });
+    });
+    revalidatePath("/fan", "layout");
+    return { artistName: artist.name };
+  });
 }
 
 export async function completeChallengeAction(input: { slug: string; challengeId: string; submission?: ChallengeSubmission }) {

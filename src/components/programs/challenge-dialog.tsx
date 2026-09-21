@@ -173,7 +173,7 @@ function ChallengeForm({ challenge, events, onDone }: { challenge: ChallengeRow 
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Title" htmlFor="ch-title" error={errors.title} className="sm:col-span-2">
-          <Input id="ch-title" value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="How well do you know Afterlight?" required autoFocus maxLength={120} />
+          <Input id="ch-title" value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="How well do you know Iceman?" required autoFocus maxLength={120} />
         </Field>
         <Field label="Description" htmlFor="ch-description" error={errors.description} className="sm:col-span-2">
           <Textarea id="ch-description" value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Shown on the fan's passport." maxLength={1000} className="min-h-20" />
@@ -258,7 +258,7 @@ function ConfigEditor({ form, set, events, errors }: { form: FormState; set: Set
     case "promo_code":
       return (
         <Field label="Promo code" htmlFor="cfg-code" error={errors["config.code"]} hint="Case-insensitive. Fans type this on their passport.">
-          <Input id="cfg-code" value={form.code} onChange={(e) => set("code", e.target.value.toUpperCase())} placeholder="AFTERLIGHT" maxLength={60} className="font-mono uppercase" required />
+          <Input id="cfg-code" value={form.code} onChange={(e) => set("code", e.target.value.toUpperCase())} placeholder="ICEMAN" maxLength={60} className="font-mono uppercase" required />
         </Field>
       );
     case "link_visit":
@@ -320,7 +320,7 @@ function QuizEditor({ questions, passScore, onChange, onPassScore }: { questions
               </Button>
             ) : null}
           </div>
-          <Input value={q.question} onChange={(e) => update(q.id, { question: e.target.value })} placeholder="What city was Afterlight recorded in?" maxLength={300} required />
+          <Input value={q.question} onChange={(e) => update(q.id, { question: e.target.value })} placeholder="What city was Iceman recorded in?" maxLength={300} required />
           <div className="mt-3 flex flex-col gap-2">
             {q.options.map((opt, oi) => (
               <div key={oi} className="flex items-center gap-2">

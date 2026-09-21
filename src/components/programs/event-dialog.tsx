@@ -168,7 +168,7 @@ function EventForm({ event, onDone }: { event: EventRow | null; onDone: (id?: st
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Name" htmlFor="ev-name" error={errors.name} className="sm:col-span-2">
-          <Input id="ev-name" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Afterlight Tour — Los Angeles" required maxLength={140} />
+          <Input id="ev-name" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Iceman Tour — Toronto" required maxLength={140} />
         </Field>
         <Field label="Description" htmlFor="ev-description" error={errors.description} className="sm:col-span-2">
           <Textarea id="ev-description" value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Doors, support acts, anything fans should know." maxLength={1000} className="min-h-20" />

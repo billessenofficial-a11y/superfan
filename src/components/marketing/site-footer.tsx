@@ -16,7 +16,7 @@ export function SiteFooter() {
           <Link href="/login?mode=fan" className="transition-colors hover:text-foreground">
             For fans
           </Link>
-          <Link href="/artists/luma-vale" className="transition-colors hover:text-foreground">
+          <Link href="/artists/drake" className="transition-colors hover:text-foreground">
             Demo
           </Link>
           <Link href="/login" className="transition-colors hover:text-foreground">

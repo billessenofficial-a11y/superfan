@@ -49,7 +49,7 @@ export function DashboardMock({ className }: { className?: string }) {
         <div className="flex items-center gap-2.5">
           <span className="flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-[11px] font-semibold text-white">LV</span>
           <div className="leading-tight">
-            <p className="text-xs font-semibold">Luma Vale</p>
+            <p className="text-xs font-semibold">Drake</p>
             <p className="text-[10px] text-subtle">Overview · Last 30 days</p>
           </div>
         </div>

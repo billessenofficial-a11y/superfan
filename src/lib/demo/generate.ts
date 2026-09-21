@@ -27,18 +27,18 @@ export const DEMO_EVENT_KINDS = [
 
 export type DemoEventKind = (typeof DEMO_EVENT_KINDS)[number]["key"];
 
-const COMMENTS = ["THIS ALBUM 😭🔥", "afterlight on repeat all week", "come to chicago pls 🙏", "the bridge on track 4 >>>", "saw you in LA last night, unreal", "need the vinyl restock!!", "who else is going to the london show", "this is the one", "crying at the outro again", "ok the visuals for this era are insane"];
+const COMMENTS = ["ICEMAN 🥶🔥", "nokia on repeat all week", "come to houston pls 🙏", "the switch-up on track 4 >>>", "saw you in toronto last night, unreal", "need the vinyl restock!!", "who else is going to the london show", "this is the one", "6ix forever 🦉", "ok the visuals for this era are insane"];
 const PRODUCTS = [
-  { title: "Afterlight Tour Hoodie", price: 8500 },
-  { title: "Afterlight Vinyl (Clear)", price: 3800 },
-  { title: "Luma Vale Logo Tee", price: 3500 },
-  { title: "Tour Poster (Signed)", price: 4500 },
-  { title: "Afterlight Cassette", price: 1800 },
-  { title: "Enamel Pin Set", price: 1600 },
+  { title: "Iceman Tour Hoodie", price: 11000 },
+  { title: "Iceman Vinyl (Frosted)", price: 4200 },
+  { title: "Owl Logo Tee", price: 4500 },
+  { title: "Tour Poster (Signed)", price: 6000 },
+  { title: "Iceman Cassette", price: 2000 },
+  { title: "Owl Enamel Pin Set", price: 2500 },
 ];
 const FIRST = ["Sarah", "Alex", "James", "Mika", "Emma", "Noah", "Priya", "Leo", "Zoe", "Mateo", "Ava", "Kai", "Nina", "Omar", "Ella"];
 const LAST = ["Nguyen", "Rellera", "Okafor", "Silva", "Cohen", "Park", "Haddad", "Moreau", "Ivanova", "Bennett"];
-const CITIES = ["Los Angeles", "New York", "London", "Chicago", "Toronto", "Berlin", "Austin"];
+const CITIES = ["Toronto", "Los Angeles", "New York", "London", "Atlanta", "Houston", "Vancouver"];
 
 function pick<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -76,7 +76,7 @@ async function run(artistId: string, kind: DemoEventKind): Promise<DemoResult> {
       const existing = Math.random() < 0.6 ? await randomFan(artistId) : null;
       const username = existing
         ? `${(existing.fan.firstName ?? "fan").toLowerCase()}${(existing.fan.lastName ?? "").toLowerCase().slice(0, 3)}`
-        : `${pick(FIRST).toLowerCase()}.${pick(["music", "vibes", "afterlight", "lv", "live"])}${Math.floor(Math.random() * 900 + 100)}`;
+        : `${pick(FIRST).toLowerCase()}.${pick(["music", "vibes", "iceman", "ovo", "6ix"])}${Math.floor(Math.random() * 900 + 100)}`;
       const externalUserId = existing ? `ig_demo_${existing.fan.id.slice(0, 8)}` : `ig_demo_${Date.now()}`;
       const text = pick(COMMENTS);
       const res = await ingestEvent({

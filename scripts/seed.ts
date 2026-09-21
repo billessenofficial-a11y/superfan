@@ -32,15 +32,15 @@ import { redeemReward } from "../src/lib/rewards/redeem";
 import { ensureSystemBadges } from "../src/lib/scoring/engine";
 
 /* ─────────────────────────────────────────────────────────────
- * Demo seed: the fictional artist "Luma Vale" with 500 fans and
+ * Demo seed: a demo workspace for "Drake" with 500 fans and
  * ~30 days of realistic activity flowing through the real pipeline.
  * ───────────────────────────────────────────────────────────── */
 
 faker.seed(2026);
 
 export const DEMO = {
-  artistSlug: "luma-vale",
-  founderEmail: "maya@lumavale.demo",
+  artistSlug: "drake",
+  founderEmail: "maya@drake.demo",
   fanEmail: "james@superfan.demo",
 };
 
@@ -51,22 +51,22 @@ const pick = <T>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.len
 const chance = (p: number) => Math.random() < p;
 
 const CITIES: { city: string; region: string; country: string; weight: number }[] = [
-  { city: "Los Angeles", region: "CA", country: "US", weight: 22 },
-  { city: "New York", region: "NY", country: "US", weight: 16 },
-  { city: "London", region: "", country: "GB", weight: 12 },
-  { city: "Chicago", region: "IL", country: "US", weight: 9 },
-  { city: "Toronto", region: "ON", country: "CA", weight: 8 },
-  { city: "Austin", region: "TX", country: "US", weight: 5 },
-  { city: "Berlin", region: "", country: "DE", weight: 4 },
-  { city: "Seattle", region: "WA", country: "US", weight: 4 },
+  { city: "Toronto", region: "ON", country: "CA", weight: 22 },
+  { city: "Los Angeles", region: "CA", country: "US", weight: 14 },
+  { city: "New York", region: "NY", country: "US", weight: 13 },
+  { city: "London", region: "", country: "GB", weight: 10 },
+  { city: "Atlanta", region: "GA", country: "US", weight: 6 },
+  { city: "Houston", region: "TX", country: "US", weight: 5 },
+  { city: "Chicago", region: "IL", country: "US", weight: 5 },
+  { city: "Miami", region: "FL", country: "US", weight: 4 },
+  { city: "Vancouver", region: "BC", country: "CA", weight: 4 },
+  { city: "Montreal", region: "QC", country: "CA", weight: 3 },
   { city: "Manchester", region: "", country: "GB", weight: 3 },
-  { city: "Sydney", region: "NSW", country: "AU", weight: 3 },
-  { city: "Nashville", region: "TN", country: "US", weight: 3 },
   { city: "Paris", region: "", country: "FR", weight: 3 },
-  { city: "Vancouver", region: "BC", country: "CA", weight: 2 },
-  { city: "Atlanta", region: "GA", country: "US", weight: 2 },
-  { city: "Denver", region: "CO", country: "US", weight: 2 },
-  { city: "Dublin", region: "", country: "IE", weight: 2 },
+  { city: "Sydney", region: "NSW", country: "AU", weight: 3 },
+  { city: "Lagos", region: "", country: "NG", weight: 2 },
+  { city: "Dubai", region: "", country: "AE", weight: 2 },
+  { city: "Memphis", region: "TN", country: "US", weight: 2 },
 ];
 function pickCity() {
   const total = CITIES.reduce((s, c) => s + c.weight, 0);
@@ -79,15 +79,15 @@ function pickCity() {
 }
 
 const PRODUCTS = [
-  { title: "Afterlight Tour Hoodie", price: 8500 },
-  { title: "Afterlight Vinyl (Clear)", price: 3800 },
-  { title: "Luma Vale Logo Tee", price: 3500 },
-  { title: "Tour Poster (Signed)", price: 4500 },
-  { title: "Afterlight Cassette", price: 1800 },
-  { title: "Enamel Pin Set", price: 1600 },
-  { title: "Afterlight Deluxe Box Set", price: 12000 },
+  { title: "Iceman Tour Hoodie", price: 11000 },
+  { title: "Iceman Vinyl (Frosted)", price: 4200 },
+  { title: "Owl Logo Tee", price: 4500 },
+  { title: "Tour Poster (Signed)", price: 6000 },
+  { title: "Iceman Cassette", price: 2000 },
+  { title: "Owl Enamel Pin Set", price: 2500 },
+  { title: "Iceman Deluxe Box Set", price: 15000 },
 ];
-const COMMENTS = ["THIS ALBUM 😭🔥", "afterlight on repeat all week", "come to chicago pls 🙏", "the bridge on track 4 >>>", "saw you in LA last night, unreal", "need the vinyl restock!!", "who else is going to the london show", "this is the one", "crying at the outro again", "ok the visuals for this era are insane", "day one fan here 🫶", "best show of my life", "the harmonies on this!!!", "played this at my wedding", "tour dates for australia??"];
+const COMMENTS = ["ICEMAN 🥶🔥", "nokia on repeat all week", "come to houston pls 🙏", "the switch-up on track 4 >>>", "saw you in toronto last night, unreal", "need the vinyl restock!!", "who else is going to the london show", "this is the one", "6ix forever 🦉", "ok the visuals for this era are insane", "day one fan here 🫶", "best show of my life", "the flow on this!!!", "played this at my wedding", "tour dates for australia??"];
 
 type Tier = "icon" | "superfan" | "dedicated" | "fan" | "listener";
 function pickTier(): Tier {
@@ -106,7 +106,7 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
   const email = faker.internet.email({ firstName: first, lastName: last, provider: pick(["gmail.com", "icloud.com", "outlook.com", "yahoo.com", "proton.me"]) }).toLowerCase();
   const seniorityDays = tier === "icon" ? 300 + Math.random() * 200 : tier === "superfan" ? 120 + Math.random() * 250 : tier === "dedicated" ? 30 + Math.random() * 200 : Math.random() * 120;
   const joinedAt = daysAgo(seniorityDays);
-  const igHandle = `${first}${pick([".", "_", ""])}${pick([last.slice(0, 4), "music", "lv", "afterlight", String(faker.number.int({ min: 1, max: 999 }))])}`.toLowerCase();
+  const igHandle = `${first}${pick([".", "_", ""])}${pick([last.slice(0, 4), "music", "ovo", "6ix", String(faker.number.int({ min: 1, max: 999 }))])}`.toLowerCase();
   const avatar = `https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(first + last + index)}&backgroundColor=c0aede,b6e3f4,ffd5dc,d1d4f9,ffdfbf`;
 
   const stats = { comments: 0, orders: 0, attended: 0, referrals: 0, challenges: 0, streams: 0 };
@@ -236,36 +236,36 @@ async function main() {
       console.log("Demo artist already exists. Run `npm run db:reset` first to reseed.");
       return;
     }
-    console.log("Seeding demo data for Luma Vale…");
+    console.log("Seeding demo data for Drake…");
     await ensureSystemBadges(db);
 
     // Founder (artist owner) + a couple of team members.
     const [founder] = await db.insert(users).values({ email: DEMO.founderEmail, displayName: "Maya Chen" }).onConflictDoNothing().returning();
     const artist = await createArtist(db, {
-      name: "Luma Vale",
+      name: "Drake",
       slug: DEMO.artistSlug,
-      genre: "Alt-pop",
-      country: "US",
-      accentColor: "#8b5cf6",
-      bio: "Alt-pop from Los Angeles. New album Afterlight out now.",
-      followerCount: 2_800_000,
+      genre: "Hip-hop",
+      country: "CA",
+      accentColor: "#d4a84b",
+      bio: "Toronto. Iceman out now.",
+      followerCount: 145_000_000,
       isDemo: true,
       createdByUserId: founder.id,
-      avatarUrl: "/demo/luma-vale.svg",
-      bannerUrl: "/demo/luma-vale-banner.svg",
+      avatarUrl: "/demo/drake.svg",
+      bannerUrl: "/demo/drake-banner.svg",
     });
     await db.update(artistMembers).set({ role: "owner" }).where(and(eq(artistMembers.artistId, artist.id), eq(artistMembers.userId, founder.id)));
     for (const m of [
-      { email: "dev@lumavale.demo", name: "Devon Park", role: "marketing" as const },
-      { email: "riley@lumavale.demo", name: "Riley Osei", role: "community" as const },
+      { email: "dev@drake.demo", name: "Devon Park", role: "marketing" as const },
+      { email: "riley@drake.demo", name: "Riley Osei", role: "community" as const },
     ]) {
       const [u] = await db.insert(users).values({ email: m.email, displayName: m.name }).returning();
       await db.insert(artistMembers).values({ artistId: artist.id, userId: u.id, role: m.role, acceptedAt: new Date(), invitedByUserId: founder.id });
     }
 
     // Integrations (mock connections).
-    await saveConnectedAccount({ artistId: artist.id, provider: "instagram", account: { externalAccountId: "17841400000000001", externalAccountName: "@lumavale", scopes: ["instagram_basic", "instagram_manage_comments", "instagram_manage_messages"], settings: { pageName: "Luma Vale" } }, isMock: true, connectedByUserId: founder.id });
-    await saveConnectedAccount({ artistId: artist.id, provider: "shopify", account: { externalAccountId: "luma-store.myshopify.com", externalAccountName: "luma-store.myshopify.com", scopes: ["read_orders", "read_customers"], settings: { shopName: "Luma Vale Official Store" } }, isMock: true, connectedByUserId: founder.id });
+    await saveConnectedAccount({ artistId: artist.id, provider: "instagram", account: { externalAccountId: "17841400000000001", externalAccountName: "@champagnepapi", scopes: ["instagram_basic", "instagram_manage_comments", "instagram_manage_messages"], settings: { pageName: "Drake" } }, isMock: true, connectedByUserId: founder.id });
+    await saveConnectedAccount({ artistId: artist.id, provider: "shopify", account: { externalAccountId: "drake-official.myshopify.com", externalAccountName: "drake-official.myshopify.com", scopes: ["read_orders", "read_customers"], settings: { shopName: "Drake Official Store" } }, isMock: true, connectedByUserId: founder.id });
     await saveConnectedAccount({ artistId: artist.id, provider: "ticketmaster", account: { externalAccountId: "discovery", externalAccountName: "Event Discovery" }, isMock: true, connectedByUserId: founder.id });
     await saveConnectedAccount({ artistId: artist.id, provider: "spotify", account: { externalAccountId: "spotify:artist:sample", externalAccountName: "Spotify for Artists (sample)", settings: { sample: true } }, isMock: true, connectedByUserId: founder.id });
     await seedSampleStreaming(artist.id, db);
@@ -274,13 +274,13 @@ async function main() {
     const eventRows = await db
       .insert(artistEvents)
       .values([
-        { artistId: artist.id, name: "Glass Hours Tour — Los Angeles", venue: "The Fonda Theatre", city: "Los Angeles", region: "CA", country: "US", startsAt: daysAgo(340, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 1200, createdByUserId: founder.id },
-        { artistId: artist.id, name: "Glass Hours Tour — New York", venue: "Bowery Ballroom", city: "New York", region: "NY", country: "US", startsAt: daysAgo(325, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 575, createdByUserId: founder.id },
-        { artistId: artist.id, name: "Glass Hours Tour — Chicago", venue: "Metro", city: "Chicago", region: "IL", country: "US", startsAt: daysAgo(310, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 1100, createdByUserId: founder.id },
-        { artistId: artist.id, name: "Afterlight Tour — Los Angeles", venue: "The Wiltern", city: "Los Angeles", region: "CA", country: "US", startsAt: daysAgo(24, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 2300, createdByUserId: founder.id },
-        { artistId: artist.id, name: "Afterlight Tour — New York", venue: "Brooklyn Steel", city: "New York", region: "NY", country: "US", startsAt: daysAgo(9, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 1800, createdByUserId: founder.id },
-        { artistId: artist.id, name: "Afterlight Tour — Los Angeles (Night 2)", venue: "The Wiltern", city: "Los Angeles", region: "CA", country: "US", startsAt: new Date(now + 2 * 3600_000), status: "upcoming", checkinOpensAt: new Date(now - 3600_000), checkinClosesAt: new Date(now + 8 * 3600_000), checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 2300, createdByUserId: founder.id },
-        { artistId: artist.id, name: "Afterlight Tour — London", venue: "O2 Academy Brixton", city: "London", country: "GB", startsAt: new Date(now + 21 * DAY), status: "upcoming", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 4900, createdByUserId: founder.id },
+        { artistId: artist.id, name: "It's All A Blur Tour — Toronto", venue: "Scotiabank Arena", city: "Toronto", region: "ON", country: "CA", startsAt: daysAgo(340, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 19800, createdByUserId: founder.id },
+        { artistId: artist.id, name: "It's All A Blur Tour — New York", venue: "Barclays Center", city: "New York", region: "NY", country: "US", startsAt: daysAgo(325, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 19000, createdByUserId: founder.id },
+        { artistId: artist.id, name: "It's All A Blur Tour — Chicago", venue: "United Center", city: "Chicago", region: "IL", country: "US", startsAt: daysAgo(310, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 23500, createdByUserId: founder.id },
+        { artistId: artist.id, name: "Iceman Tour — Toronto", venue: "Scotiabank Arena", city: "Toronto", region: "ON", country: "CA", startsAt: daysAgo(24, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 19800, createdByUserId: founder.id },
+        { artistId: artist.id, name: "Iceman Tour — New York", venue: "Madison Square Garden", city: "New York", region: "NY", country: "US", startsAt: daysAgo(9, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 20000, createdByUserId: founder.id },
+        { artistId: artist.id, name: "Iceman Tour — Los Angeles", venue: "Kia Forum", city: "Los Angeles", region: "CA", country: "US", startsAt: new Date(now + 2 * 3600_000), status: "upcoming", checkinOpensAt: new Date(now - 3600_000), checkinClosesAt: new Date(now + 8 * 3600_000), checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 17500, createdByUserId: founder.id },
+        { artistId: artist.id, name: "Iceman Tour — London", venue: "The O2", city: "London", country: "GB", startsAt: new Date(now + 21 * DAY), status: "upcoming", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 20000, createdByUserId: founder.id },
       ])
       .returning();
     const tonight = eventRows[5];
@@ -289,17 +289,17 @@ async function main() {
     const challengeRows = await db
       .insert(challenges)
       .values([
-        { artistId: artist.id, title: "Join the album countdown", description: "Be part of the Afterlight countdown and unlock the first badge of the era.", type: "manual", status: "active", points: 100, createdByUserId: founder.id },
+        { artistId: artist.id, title: "Join the album countdown", description: "Be part of the Iceman countdown and unlock the first badge of the era.", type: "manual", status: "active", points: 100, createdByUserId: founder.id },
         { artistId: artist.id, title: "Check in at tonight's show", description: "Scan the QR at the venue to earn 500 points.", type: "event_checkin", status: "active", points: 500, isMajor: true, config: { eventId: tonight.id }, endsAt: new Date(now + 10 * 3600_000), createdByUserId: founder.id },
         { artistId: artist.id, title: "Refer a friend", description: "Share your link. When a friend joins and takes their first action, you both win.", type: "referral", status: "active", points: 200, config: { referralsRequired: 1 }, createdByUserId: founder.id },
-        { artistId: artist.id, title: "How well do you know Afterlight?", description: "Four questions. Get them all right.", type: "quiz", status: "active", points: 150, isMajor: true, config: { passScore: 3, questions: [
-          { id: "q1", question: "Which track opens Afterlight?", options: ["Glass Hours", "Neon Tide", "Afterlight", "Low Sun"], answerIndex: 1 },
-          { id: "q2", question: "Where was the album recorded?", options: ["Berlin", "Los Angeles", "Nashville", "London"], answerIndex: 1 },
-          { id: "q3", question: "How many tracks are on the standard edition?", options: ["10", "11", "12", "14"], answerIndex: 2 },
-          { id: "q4", question: "Who features on 'Low Sun'?", options: ["No one", "Iris Wren", "The Marlows", "DJ Kest"], answerIndex: 1 },
+        { artistId: artist.id, title: "How well do you know Drake?", description: "Four questions. Get them all right.", type: "quiz", status: "active", points: 150, isMajor: true, config: { passScore: 3, questions: [
+          { id: "q1", question: "Which city is Drake from?", options: ["Houston", "Toronto", "Memphis", "Atlanta"], answerIndex: 1 },
+          { id: "q2", question: "Which show did Drake act in before music?", options: ["Skins", "Degrassi", "The O.C.", "Euphoria"], answerIndex: 1 },
+          { id: "q3", question: "What year did 'God's Plan' come out?", options: ["2016", "2017", "2018", "2019"], answerIndex: 2 },
+          { id: "q4", question: "Which album has 'One Dance'?", options: ["Take Care", "Views", "Scorpion", "Nothing Was the Same"], answerIndex: 1 },
         ] }, createdByUserId: founder.id },
-        { artistId: artist.id, title: "Enter the vinyl code", description: "Find the code inside the clear vinyl sleeve.", type: "promo_code", status: "active", points: 100, config: { code: "AFTERLIGHT" }, createdByUserId: founder.id },
-        { artistId: artist.id, title: "RSVP: listening party", description: "Tell us which city you'd come to for a private listening party.", type: "form_submission", status: "active", points: 100, config: { fields: [{ key: "city", label: "Which city?", type: "select", options: ["Los Angeles", "New York", "London", "Chicago", "Toronto"], required: true }, { key: "why", label: "Why should we pick you?", type: "textarea", required: false }] }, createdByUserId: founder.id },
+        { artistId: artist.id, title: "Enter the vinyl code", description: "Find the code inside the frosted vinyl sleeve.", type: "promo_code", status: "active", points: 100, config: { code: "ICEMAN" }, createdByUserId: founder.id },
+        { artistId: artist.id, title: "RSVP: listening party", description: "Tell us which city you'd come to for a private listening party.", type: "form_submission", status: "active", points: 100, config: { fields: [{ key: "city", label: "Which city?", type: "select", options: ["Toronto", "Los Angeles", "New York", "London", "Houston"], required: true }, { key: "why", label: "Why should we pick you?", type: "textarea", required: false }] }, createdByUserId: founder.id },
       ])
       .returning();
 
@@ -307,14 +307,14 @@ async function main() {
     const rewardRows = await db
       .insert(rewards)
       .values([
-        { artistId: artist.id, name: "Signed Afterlight poster", description: "Hand-signed 18×24 tour poster, shipped to you.", pointCost: 750, inventory: 100, fulfillmentType: "physical", status: "active", createdByUserId: founder.id },
+        { artistId: artist.id, name: "Signed Iceman poster", description: "Hand-signed 18×24 tour poster, shipped to you.", pointCost: 750, inventory: 100, fulfillmentType: "physical", status: "active", createdByUserId: founder.id },
         { artistId: artist.id, name: "Early access to tour merch", description: "24-hour early access to every drop this era.", pointCost: 1000, inventory: null, fulfillmentType: "access", status: "active", createdByUserId: founder.id },
         { artistId: artist.id, name: "Private listening party", description: "An intimate first listen of the deluxe edition, in your city.", pointCost: 2000, inventory: 50, fulfillmentType: "access", status: "active", minimumScore: 3500, createdByUserId: founder.id },
         { artistId: artist.id, name: "Meet-and-greet lottery entry", description: "One entry into the meet-and-greet draw for the next show in your city.", pointCost: 500, inventory: null, fulfillmentType: "lottery", status: "active", maxPerFan: 3, createdByUserId: founder.id },
-        { artistId: artist.id, name: "Afterlight wallpaper pack", description: "Phone and desktop wallpapers from the album shoot.", pointCost: 150, inventory: null, fulfillmentType: "digital", status: "active", createdByUserId: founder.id },
+        { artistId: artist.id, name: "Iceman wallpaper pack", description: "Phone and desktop wallpapers from the album shoot.", pointCost: 150, inventory: null, fulfillmentType: "digital", status: "active", createdByUserId: founder.id },
         { artistId: artist.id, name: "Vinyl test pressing", description: "One of five test pressings, numbered and signed.", pointCost: 5000, inventory: 5, fulfillmentType: "physical", status: "active", minimumScore: 7000, createdByUserId: founder.id },
-        { artistId: artist.id, name: "London presale code", description: "Presale access for O2 Academy Brixton.", pointCost: 400, inventory: 300, fulfillmentType: "access", status: "active", locationRestriction: "London", createdByUserId: founder.id },
-        { artistId: artist.id, name: "Personal video message", description: "A 30-second video message from Luma.", pointCost: 3000, inventory: 10, fulfillmentType: "manual", status: "active", createdByUserId: founder.id },
+        { artistId: artist.id, name: "London presale code", description: "Presale access for The O2, London.", pointCost: 400, inventory: 300, fulfillmentType: "access", status: "active", locationRestriction: "London", createdByUserId: founder.id },
+        { artistId: artist.id, name: "Personal video message", description: "A 30-second video message from Drake.", pointCost: 3000, inventory: 10, fulfillmentType: "manual", status: "active", createdByUserId: founder.id },
       ])
       .returning();
 
@@ -355,7 +355,7 @@ async function main() {
       const p = { icon: 0.9, superfan: 0.7, dedicated: 0.45, fan: 0.2, listener: 0.05 }[f.tier];
       if (chance(p)) await completeChallenge({ artistId: artist.id, fanId: f.fanId, challengeId: challengeRows[0].id }).catch(() => undefined);
       if (chance(p * 0.6)) await completeChallenge({ artistId: artist.id, fanId: f.fanId, challengeId: challengeRows[3].id, submission: { answers: { q1: 1, q2: 1, q3: 2, q4: 1 } } }).catch(() => undefined);
-      if (chance(p * 0.4)) await completeChallenge({ artistId: artist.id, fanId: f.fanId, challengeId: challengeRows[4].id, submission: { code: "AFTERLIGHT" } }).catch(() => undefined);
+      if (chance(p * 0.4)) await completeChallenge({ artistId: artist.id, fanId: f.fanId, challengeId: challengeRows[4].id, submission: { code: "ICEMAN" } }).catch(() => undefined);
       if (chance(p * 0.3)) await completeChallenge({ artistId: artist.id, fanId: f.fanId, challengeId: challengeRows[5].id, submission: { fields: { city: pick(["Los Angeles", "New York", "London"]) } } }).catch(() => undefined);
     }
 
@@ -386,22 +386,22 @@ async function main() {
       for (let i = 0; i < 18; i++) {
         await ingestEvent({ artistId: artist.id, fanId: actor.fanId, source: "instagram", type: EVENT_TYPES.instagramComment, sourceEventId: `comment:james_${i}`, occurredAt: daysAgo(1 + i * 9), identity: { provider: "instagram", externalUserId: igId, username: "jamesmusic", displayName: "James Rellera" }, metadata: { text: pick(COMMENTS), mediaId: `media_${i}`, mediaType: i % 2 ? "REELS" : "FEED" }, summary: i % 2 ? "Commented on an Instagram Reel" : "Commented on an Instagram post" }, tx);
       }
-      const orders = [{ t: "Afterlight Tour Hoodie", p: 8500, d: 3 }, { t: "Afterlight Vinyl (Clear)", p: 3800, d: 40 }, { t: "Tour Poster (Signed)", p: 4500, d: 95 }, { t: "Luma Vale Logo Tee", p: 3500, d: 210 }, { t: "Afterlight Deluxe Box Set", p: 12000, d: 15 }];
+      const orders = [{ t: "Iceman Tour Hoodie", p: 11000, d: 3 }, { t: "Iceman Vinyl (Frosted)", p: 4200, d: 40 }, { t: "Tour Poster (Signed)", p: 6000, d: 95 }, { t: "Owl Logo Tee", p: 4500, d: 210 }, { t: "Iceman Deluxe Box Set", p: 15000, d: 15 }];
       for (const o of orders) {
         const orderId = faker.string.numeric(7);
         await ingestEvent({ artistId: artist.id, fanId: actor.fanId, source: "shopify", type: EVENT_TYPES.shopifyOrderCreated, sourceEventId: `order:${orderId}`, occurredAt: daysAgo(o.d), email: DEMO.fanEmail, identity: { provider: "shopify", externalUserId: "customer_8841", username: DEMO.fanEmail, displayName: "James Rellera" }, metadata: { orderId, orderName: `#${orderId}`, amountCents: o.p, currency: "USD", items: [{ title: o.t, quantity: 1, priceCents: o.p }] }, summary: `Purchased ${o.t}` }, tx);
       }
       for (let week = 0; week < 8; week++) {
         const plays = 28 + faker.number.int({ min: 0, max: 30 });
-        const track = week % 3 === 0 ? "Neon Tide" : "Afterlight";
+        const track = week % 3 === 0 ? "Nokia" : "God's Plan";
         await ingestEvent({ artistId: artist.id, fanId: actor.fanId, source: "spotify", type: EVENT_TYPES.spotifyStream, sourceEventId: `stream:sp_james:w${week}`, occurredAt: daysAgo(week * 7 + 1), identity: { provider: "spotify", externalUserId: "sp_james_rellera", username: "jamesrellera", displayName: "James Rellera" }, metadata: { plays, topTrack: track, sample: true }, summary: `Streamed ${track} ${plays} times this week` }, tx);
       }
       return actor.fanId;
     });
     for (const ev of eventRows.slice(0, 5)) await checkInFan({ eventId: ev.id, fanId: james, method: "qr", now: new Date(ev.startsAt.getTime() + 20 * 60_000) });
-    await ingestEvent({ artistId: artist.id, fanId: james, source: "csv", type: EVENT_TYPES.eventAttendanceImported, sourceEventId: `attend:2025:${james}`, occurredAt: daysAgo(300), verification: "imported", metadata: { eventName: "Glass Hours Tour — Los Angeles" }, summary: "Attended Glass Hours Tour — Los Angeles" });
+    await ingestEvent({ artistId: artist.id, fanId: james, source: "csv", type: EVENT_TYPES.eventAttendanceImported, sourceEventId: `attend:2025:${james}`, occurredAt: daysAgo(300), verification: "imported", metadata: { eventName: "It's All A Blur Tour — Toronto" }, summary: "Attended It's All A Blur Tour — Toronto" });
     for (const c of [challengeRows[0], challengeRows[3], challengeRows[4], challengeRows[5]]) {
-      const submission = c.type === "quiz" ? { answers: { q1: 1, q2: 1, q3: 2, q4: 1 } } : c.type === "promo_code" ? { code: "AFTERLIGHT" } : c.type === "form_submission" ? { fields: { city: "Los Angeles", why: "Been here since Glass Hours." } } : {};
+      const submission = c.type === "quiz" ? { answers: { q1: 1, q2: 1, q3: 2, q4: 1 } } : c.type === "promo_code" ? { code: "ICEMAN" } : c.type === "form_submission" ? { fields: { city: "Los Angeles", why: "Been here since Take Care." } } : {};
       await completeChallenge({ artistId: artist.id, fanId: james, challengeId: c.id, submission }).catch(() => undefined);
     }
     const [jamesAf] = await db.select().from(artistFans).where(and(eq(artistFans.artistId, artist.id), eq(artistFans.fanId, james)));
@@ -419,25 +419,25 @@ async function main() {
     await db.insert(fanTagAssignments).values({ artistId: artist.id, tagId: vipTag.id, fanId: james }).onConflictDoNothing();
 
     // An unclaimed Instagram commenter with a ready claim link (to demo /claim).
-    const unclaimed = await ingestEvent({ artistId: artist.id, source: "instagram", type: EVENT_TYPES.instagramComment, sourceEventId: "comment:unclaimed_demo_1", occurredAt: daysAgo(0.2), identity: { provider: "instagram", externalUserId: "ig_990011", username: "sofia.afterlight", displayName: "Sofia" }, metadata: { text: "VIP 🙋‍♀️", mediaId: "media_vip" }, summary: "Commented on an Instagram post" });
+    const unclaimed = await ingestEvent({ artistId: artist.id, source: "instagram", type: EVENT_TYPES.instagramComment, sourceEventId: "comment:unclaimed_demo_1", occurredAt: daysAgo(0.2), identity: { provider: "instagram", externalUserId: "ig_990011", username: "sofia.6ix", displayName: "Sofia" }, metadata: { text: "VIP 🙋‍♀️", mediaId: "media_vip" }, summary: "Commented on an Instagram post" });
     const claim = await createClaimToken(db, { artistId: artist.id, identityId: unclaimed.identityId! });
 
     // Segments & campaigns.
     const laRules: SegmentGroup = { kind: "group", match: "all", children: [
-      { kind: "condition", field: "city", operator: "eq", value: "Los Angeles" },
+      { kind: "condition", field: "city", operator: "eq", value: "Toronto" },
       { kind: "condition", field: "superfan_score", operator: "gt", value: 3500 },
     ] };
     const { countSegment } = await import("../src/lib/segments/query");
     const [laSegment] = await db.insert(segments).values([
-      { artistId: artist.id, name: "LA Superfans", description: "Los Angeles fans above Superfan level", rules: laRules, cachedCount: await countSegment(db, artist.id, laRules), cachedAt: new Date(), createdByUserId: founder.id },
+      { artistId: artist.id, name: "Toronto Superfans", description: "Toronto fans above Superfan level", rules: laRules, cachedCount: await countSegment(db, artist.id, laRules), cachedAt: new Date(), createdByUserId: founder.id },
       { artistId: artist.id, name: "Big spenders, no shows", description: "Spent over $150 but never attended", rules: { kind: "group", match: "all", children: [{ kind: "condition", field: "lifetime_spend", operator: "gt", value: 150 }, { kind: "condition", field: "events_attended", operator: "eq", value: 0 }] }, createdByUserId: founder.id },
       { artistId: artist.id, name: "Going quiet", description: "Superfans inactive for 21+ days", rules: { kind: "group", match: "all", children: [{ kind: "condition", field: "superfan_score", operator: "gte", value: 3500 }, { kind: "condition", field: "last_active_days", operator: "gt", value: 21 }] }, createdByUserId: founder.id },
       { artistId: artist.id, name: "London presale", description: "London fans who have joined", rules: { kind: "group", match: "all", children: [{ kind: "condition", field: "city", operator: "eq", value: "London" }, { kind: "condition", field: "joined", operator: "is_known" }] }, createdByUserId: founder.id },
     ]).returning();
     await db.insert(campaigns).values([
-      { artistId: artist.id, name: "VIP LA Listening Party", description: "Private first listen of the deluxe edition.", type: "vip_access", status: "live", segmentId: laSegment.id, minimumScore: 5000, capacity: 150, startsAt: new Date(now + 7 * DAY), rewardId: rewardRows[2].id, createdByUserId: founder.id },
-      { artistId: artist.id, name: "Afterlight trivia week", description: "Album week challenge.", type: "challenge", status: "live", challengeId: challengeRows[3].id, startsAt: daysAgo(3), endsAt: new Date(now + 4 * DAY), createdByUserId: founder.id },
-      { artistId: artist.id, name: "London presale drop", description: "Presale codes for Brixton.", type: "promo_code", status: "scheduled", segmentId: null, startsAt: new Date(now + 2 * DAY), rewardId: rewardRows[6].id, config: { code: "BRIXTON26" }, createdByUserId: founder.id },
+      { artistId: artist.id, name: "VIP Toronto Listening Party", description: "Private first listen of the deluxe edition.", type: "vip_access", status: "live", segmentId: laSegment.id, minimumScore: 5000, capacity: 150, startsAt: new Date(now + 7 * DAY), rewardId: rewardRows[2].id, createdByUserId: founder.id },
+      { artistId: artist.id, name: "Iceman trivia week", description: "Album week challenge.", type: "challenge", status: "live", challengeId: challengeRows[3].id, startsAt: daysAgo(3), endsAt: new Date(now + 4 * DAY), createdByUserId: founder.id },
+      { artistId: artist.id, name: "London presale drop", description: "Presale codes for The O2.", type: "promo_code", status: "scheduled", segmentId: null, startsAt: new Date(now + 2 * DAY), rewardId: rewardRows[6].id, config: { code: "THEO226" }, createdByUserId: founder.id },
       { artistId: artist.id, name: "Which city next?", description: "Fan survey for the next tour leg.", type: "fan_survey", status: "draft", config: { questions: ["Which city should we add?", "Weeknight or weekend?"] }, createdByUserId: founder.id },
     ]);
 
@@ -445,7 +445,7 @@ async function main() {
     const [{ identities }] = await db.select({ identities: sql<number>`count(*)::int` }).from(fanIdentities).where(eq(fanIdentities.artistId, artist.id));
 
     console.log(`
-✔ Seeded Luma Vale
+✔ Seeded Drake
    fans: ${counts.fans}  superfans: ${counts.superfans}  identities: ${identities}
    referrals: ${referralsMade}  redemptions: ${redemptions}  spotify-linked fans: ${seeded.filter((f) => f.stats.streams > 0).length}
 
@@ -453,7 +453,7 @@ Sign in (magic links print to this console when email is not configured):
    Artist dashboard → ${DEMO.founderEmail}
    Fan passport     → ${DEMO.fanEmail}
 
-Demo claim link (unclaimed Instagram commenter @sofia.afterlight):
+Demo claim link (unclaimed Instagram commenter @sofia.6ix):
    ${claim.url}
 `);
   } finally {

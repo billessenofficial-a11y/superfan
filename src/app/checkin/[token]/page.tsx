@@ -118,7 +118,7 @@ export default async function CheckinPage({ params }: Props) {
             <h2 className="text-lg font-semibold tracking-tight">Sign in to check in</h2>
             <p className="mt-1 text-sm text-muted-foreground">You&apos;ll come right back here.</p>
             <div className="mt-5">
-              <LoginForm mode="fan" next={`/checkin/${token}`} artistName={artist?.name} demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@lumavale.demo", fanEmail: "james@superfan.demo" } : undefined} />
+              <LoginForm mode="fan" next={`/checkin/${token}`} artistName={artist?.name} demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@drake.demo", fanEmail: "james@superfan.demo" } : undefined} />
             </div>
           </div>
         )}

@@ -31,7 +31,7 @@ export const integrations = pgTable(
     status: integrationStatusEnum("status").notNull().default("disconnected"),
     /** e.g. Instagram business account id, Shopify shop domain. */
     externalAccountId: text("external_account_id"),
-    /** e.g. "@lumavale", "luma-store.myshopify.com". */
+    /** e.g. "@champagnepapi", "drake-official.myshopify.com". */
     externalAccountName: text("external_account_name"),
     /** Encrypted with SUPERFAN_ENCRYPTION_KEY. Never returned to the client. */
     accessTokenEncrypted: text("access_token_encrypted"),

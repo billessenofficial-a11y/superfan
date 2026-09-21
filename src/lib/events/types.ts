@@ -41,6 +41,8 @@ export const EVENT_TYPES = {
 
   fanSignup: "fan.signup",
   fanJoined: "fan.joined",
+  /** Fan left the artist's fan club from their passport (history is kept). */
+  fanLeft: "fan.left",
   fanReferralCompleted: "fan.referral.completed",
   fanLevelReached: "fan.level_reached",
   fanBadgeEarned: "fan.badge_earned",

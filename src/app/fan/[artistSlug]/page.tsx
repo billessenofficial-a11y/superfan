@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, CalendarDays, ChevronRight, Gift, ListChecks, Lock, PartyPopper, QrCode } from "lucide-react";
 import { ActivityRow, summarize, type ActivityItem } from "@/components/fan/activity-row";
 import { BadgeIcon } from "@/components/fan/badge-icon";
+import { LeaveArtistButton } from "@/components/fan/leave-button";
 import { ReferralCard } from "@/components/fan/referral-card";
 import { PassportSection } from "@/components/fan/section";
 import { TierCard } from "@/components/fan/tier-card";
@@ -30,7 +31,7 @@ export default async function PassportPage({ params, searchParams }: Props) {
   const [{ artistSlug }, { welcome }] = await Promise.all([params, searchParams]);
   const { fan } = await requireFanContext(`/fan/${artistSlug}`);
   const passport = await loadPassport(fan.id, artistSlug);
-  if (!passport || !passport.membership) notFound();
+  if (!passport || !passport.membership?.joinedAt) notFound();
   const { artist, membership, challenges, rewards, events, badges, identities, referrals, timeline, pointTransactions, topPercent } = passport;
   const base = `/fan/${artistSlug}`;
 
@@ -260,10 +261,11 @@ export default async function PassportPage({ params, searchParams }: Props) {
       <div className="flex items-center justify-center gap-2 pt-2 text-[11px] text-subtle">
         <CalendarDays className="size-3" /> Passport issued {formatDate(membership.joinedAt ?? membership.firstSeenAt, { month: "long", day: "numeric", year: "numeric" })}
       </div>
-      <div className="text-center">
+      <div className="flex flex-col items-center gap-1 text-center">
         <Button asChild variant="link" size="sm">
           <Link href={`/artists/${artistSlug}`}>View {artist.name}&apos;s public page</Link>
         </Button>
+        <LeaveArtistButton slug={artistSlug} artistName={artist.name} />
       </div>
     </div>
   );

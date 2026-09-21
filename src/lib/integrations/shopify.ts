@@ -158,7 +158,7 @@ export const shopifyAdapter: IntegrationAdapter = {
   },
 
   async mockConnect(): Promise<ConnectedAccount> {
-    return { externalAccountId: "luma-store.myshopify.com", externalAccountName: "luma-store.myshopify.com", scopes: SHOPIFY_SCOPES, settings: { shopName: "Luma Vale Official Store", mock: true } };
+    return { externalAccountId: "drake-official.myshopify.com", externalAccountName: "drake-official.myshopify.com", scopes: SHOPIFY_SCOPES, settings: { shopName: "Drake Official Store", mock: true } };
   },
 
   async disconnect() {

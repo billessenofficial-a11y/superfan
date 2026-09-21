@@ -67,6 +67,7 @@ export type ProductEvent =
   | "reward_created"
   | "event_created"
   | "fan_joined"
+  | "fan_left"
   | "challenge_completed"
   | "reward_redeemed"
   | "event_checked_in"

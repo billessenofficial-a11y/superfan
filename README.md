@@ -92,7 +92,7 @@ npm run dev           # http://localhost:3000
 
 Sign in at `/login`. In demo mode (`SUPERFAN_DEMO_MODE=true`, no Supabase) the login page offers one-click demo accounts:
 
-- Artist dashboard → `maya@lumavale.demo`
+- Artist dashboard → `maya@drake.demo`
 - Fan passport → `james@superfan.demo`
 
 Magic links for any other email print to the server console.
@@ -132,7 +132,7 @@ npm run db:reset           # DEV ONLY: drop everything and re-apply
 npm run db:seed
 ```
 
-Creates the fictional artist **Luma Vale** with ~500 fans, realistic score distribution (Listener → Icon), ~300 Instagram interactions, ~160 orders, 7 concerts (past + tonight + upcoming), ~100 attendees, 80 referrals, 6 challenges, 8 rewards, segments, campaigns, team members, mock Instagram/Shopify connections and 30+ days of activity — all created through the real ingestion pipeline. It also prints a ready-to-use **claim link** for an unclaimed Instagram commenter so you can demo `/claim/[token]`.
+Creates a demo workspace for **Drake** (demo data only, nothing real) with ~500 fans, realistic score distribution (Listener → Icon), ~300 Instagram interactions, ~160 orders, 7 concerts (past + tonight + upcoming), ~100 attendees, 80 referrals, 6 challenges, 8 rewards, segments, campaigns, team members, mock Instagram/Shopify connections and 30+ days of activity — all created through the real ingestion pipeline. It also prints a ready-to-use **claim link** for an unclaimed Instagram commenter so you can demo `/claim/[token]`.
 
 The artist dashboard includes a development-only **Generate demo event** menu (Instagram comment, merch order, concert check-in, referral, challenge completion, reward redemption) that pushes synthetic events through the same path as real webhooks.
 
@@ -184,7 +184,7 @@ Every provider implements `IntegrationAdapter` (`src/lib/integrations/types.ts`)
 2. Permissions: `instagram_basic`, `instagram_manage_comments`, `instagram_manage_messages`, `pages_show_list`, `pages_read_engagement`, `pages_manage_metadata`.
 3. Webhooks → Instagram object → subscribe to `comments`, `mentions`, `messages`; callback URL `https://<app>/api/webhooks/meta`, verify token = `META_WEBHOOK_VERIFY_TOKEN`.
 4. Add `https://<app>/api/integrations/instagram/callback` as a valid OAuth redirect URI.
-5. Set `META_APP_ID` / `META_APP_SECRET` and connect from **Integrations**. Without credentials the mock adapter connects `@lumavale`.
+5. Set `META_APP_ID` / `META_APP_SECRET` and connect from **Integrations**. Without credentials the mock adapter connects `@champagnepapi`.
 
 Superfan only captures interactions with the artist's own professional account (comments, DMs where permitted, mentions). It never tracks what a fan likes or watches elsewhere. DM content is not stored; only that a message happened.
 
@@ -213,7 +213,7 @@ HMAC=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$SHOPIFY_CLIENT_SECRET"
 curl -X POST http://localhost:3000/api/webhooks/shopify \
   -H 'Content-Type: application/json' \
   -H "X-Shopify-Topic: orders/create" \
-  -H "X-Shopify-Shop-Domain: luma-store.myshopify.com" \
+  -H "X-Shopify-Shop-Domain: drake-official.myshopify.com" \
   -H "X-Shopify-Webhook-Id: test-$(date +%s)" \
   -H "X-Shopify-Hmac-Sha256: $HMAC" \
   -d "$BODY"

@@ -9,18 +9,18 @@ import type { TopTrackStat } from "@/db/schema";
  */
 
 export const SAMPLE_TRACKS = [
-  { title: "Neon Tide", weight: 0.26 },
-  { title: "Afterlight", weight: 0.21 },
-  { title: "Glass Hours", weight: 0.14 },
-  { title: "Low Sun", weight: 0.11 },
-  { title: "Static Bloom", weight: 0.09 },
-  { title: "Half Moon Motel", weight: 0.07 },
-  { title: "Overexposed", weight: 0.07 },
-  { title: "Paper Sun", weight: 0.05 },
+  { title: "Nokia", weight: 0.22 },
+  { title: "God's Plan", weight: 0.17 },
+  { title: "One Dance", weight: 0.14 },
+  { title: "What Did I Miss?", weight: 0.12 },
+  { title: "Passionfruit", weight: 0.1 },
+  { title: "Hotline Bling", weight: 0.09 },
+  { title: "Jimmy Cooks", weight: 0.09 },
+  { title: "Rich Baby Daddy", weight: 0.07 },
 ] as const;
 
 /** Released 21 days before "today" and still decaying. */
-export const SAMPLE_RELEASE = { title: "Neon Tide (Acoustic)", daysAgo: 21 };
+export const SAMPLE_RELEASE = { title: "Dog House", daysAgo: 21 };
 
 export type SampleDay = {
   day: string;
@@ -50,17 +50,17 @@ export function generateSampleStreamingDays(opts: { days?: number; endsAt?: Date
   const end = opts.endsAt ?? new Date();
   const rand = mulberry32(opts.seed ?? 20260921);
   const out: SampleDay[] = [];
-  let followers = 1_238_000;
+  let followers = 94_500_000;
 
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate() - i));
     const t = -i; // days relative to today (0 = today)
-    const growth = 1 + (0.22 * (days - 1 - i)) / (days - 1);
+    const growth = 1 + (0.12 * (days - 1 - i)) / (days - 1);
     const weekday = WEEKDAY_MULTIPLIER[d.getUTCDay()];
     const release = t >= -SAMPLE_RELEASE.daysAgo ? 1 + 1.35 * Math.exp(-(t + SAMPLE_RELEASE.daysAgo) / 6) : 1;
     const playlist = t >= -63 ? 1 + 0.3 * Math.exp(-(t + 63) / 12) : 1;
     const noise = 0.94 + rand() * 0.12;
-    const streams = Math.round(420_000 * growth * weekday * release * playlist * noise);
+    const streams = Math.round(27_000_000 * growth * weekday * release * playlist * noise);
 
     const releaseBoost = t >= -SAMPLE_RELEASE.daysAgo ? 0.16 * (0.55 + 0.45 * Math.exp(-(t + SAMPLE_RELEASE.daysAgo) / 14)) : 0;
     const topTracks: TopTrackStat[] = SAMPLE_TRACKS.map((tr) => ({
@@ -70,8 +70,8 @@ export function generateSampleStreamingDays(opts: { days?: number; endsAt?: Date
     if (releaseBoost > 0) topTracks.push({ title: SAMPLE_RELEASE.title, streams: Math.round(streams * releaseBoost) });
     topTracks.sort((a, b) => b.streams - a.streams);
 
-    followers += Math.round(150 + rand() * 90 + (release - 1) * 3200 + (playlist - 1) * 800);
-    const monthlyListeners = Math.round(streams * 4.1 * (0.97 + rand() * 0.06));
+    followers += Math.round(9_000 + rand() * 5_000 + (release - 1) * 180_000 + (playlist - 1) * 40_000);
+    const monthlyListeners = Math.round(streams * 2.9 * (0.97 + rand() * 0.06));
 
     out.push({
       day: d.toISOString().slice(0, 10),

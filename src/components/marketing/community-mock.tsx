@@ -1,13 +1,13 @@
 import { CheckCircle2, Gift, ListChecks, Lock, Ticket } from "lucide-react";
 
 const REWARDS = [
-  { name: "Early access: Afterlight tour", cost: "1,200 pts", tag: "Access", icon: <Ticket className="size-4" />, locked: false },
+  { name: "Early access: Iceman tour", cost: "1,200 pts", tag: "Access", icon: <Ticket className="size-4" />, locked: false },
   { name: "Signed tour poster", cost: "900 pts", tag: "12 left", icon: <Gift className="size-4" />, locked: false },
   { name: "Soundcheck party · LA", cost: "Icon only", tag: "Level locked", icon: <Lock className="size-4" />, locked: true },
 ];
 
 const CHALLENGES = [
-  { title: "Afterlight lyric quiz", points: "+150", done: true },
+  { title: "Iceman lyric quiz", points: "+150", done: true },
   { title: "Bring a friend to a show", points: "+200", done: false },
   { title: "Check in at the LA show", points: "+500", done: false },
 ];

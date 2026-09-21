@@ -113,7 +113,7 @@ export default async function JoinPage({ params, searchParams }: Props) {
                 ))}
               </ul>
               <div className="mt-6">
-                <LoginForm mode="fan" next={selfHref} artistName={artist.name} demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@lumavale.demo", fanEmail: "james@superfan.demo" } : undefined} />
+                <LoginForm mode="fan" next={selfHref} artistName={artist.name} demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@drake.demo", fanEmail: "james@superfan.demo" } : undefined} />
               </div>
             </>
           )}

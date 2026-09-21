@@ -43,9 +43,9 @@ export const ticketmasterAdapter: IntegrationAdapter = {
 };
 
 const SAMPLE_EVENTS: DiscoveredEvent[] = [
-  { id: "sample-1", name: "Luma Vale — Afterlight Tour", url: null, startsAt: new Date(Date.now() + 12 * 86400_000).toISOString(), venue: "The Wiltern", city: "Los Angeles", region: "CA", country: "US", imageUrl: null },
-  { id: "sample-2", name: "Luma Vale — Afterlight Tour", url: null, startsAt: new Date(Date.now() + 19 * 86400_000).toISOString(), venue: "Brooklyn Steel", city: "New York", region: "NY", country: "US", imageUrl: null },
-  { id: "sample-3", name: "Luma Vale — Afterlight Tour", url: null, startsAt: new Date(Date.now() + 33 * 86400_000).toISOString(), venue: "O2 Academy Brixton", city: "London", region: null, country: "GB", imageUrl: null },
+  { id: "sample-1", name: "Drake — Iceman Tour", url: null, startsAt: new Date(Date.now() + 12 * 86400_000).toISOString(), venue: "Kia Forum", city: "Los Angeles", region: "CA", country: "US", imageUrl: null },
+  { id: "sample-2", name: "Drake — Iceman Tour", url: null, startsAt: new Date(Date.now() + 19 * 86400_000).toISOString(), venue: "Madison Square Garden", city: "New York", region: "NY", country: "US", imageUrl: null },
+  { id: "sample-3", name: "Drake — Iceman Tour", url: null, startsAt: new Date(Date.now() + 33 * 86400_000).toISOString(), venue: "The O2", city: "London", region: null, country: "GB", imageUrl: null },
 ];
 
 /** Search events by keyword using the Discovery API; falls back to samples without a key. */

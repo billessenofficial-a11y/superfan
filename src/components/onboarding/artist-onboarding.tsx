@@ -99,7 +99,7 @@ export function ArtistOnboarding({ hasArtist }: { hasArtist: boolean }) {
                   setName(e.target.value);
                   if (!slugTouched) setSlug(slugify(e.target.value));
                 }}
-                placeholder="Luma Vale"
+                placeholder="Drake"
                 autoFocus
               />
             </Field>

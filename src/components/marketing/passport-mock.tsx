@@ -9,7 +9,7 @@ export function PassportMock({ className }: { className?: string }) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_80%_0%,rgba(255,255,255,0.14),transparent)]" />
       <div className="relative flex items-start justify-between">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/60">Luma Vale · Fan Passport</p>
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/60">Drake · Fan Passport</p>
           <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/70">Gold · Level 7</p>
           <p className="mt-1 text-4xl font-semibold tracking-tight">Superfan</p>
         </div>

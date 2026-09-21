@@ -13,7 +13,7 @@ export default async function PassportLayout({ children, params }: { children: R
   const { fan } = await requireFanContext(`/fan/${artistSlug}`);
   const passport = await loadPassport(fan.id, artistSlug);
   if (!passport) notFound();
-  if (!passport.membership) redirect(`/artists/${artistSlug}/join`);
+  if (!passport.membership?.joinedAt) redirect(`/artists/${artistSlug}/join`);
   const { artist } = passport;
 
   return (

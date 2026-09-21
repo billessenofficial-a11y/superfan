@@ -44,7 +44,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             mode={mode}
             next={next}
             artistName={params.artist}
-            demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@lumavale.demo", fanEmail: "james@superfan.demo" } : undefined}
+            demo={isDemoMode && !features.supabaseAuth ? { enabled: true, artistEmail: "maya@drake.demo", fanEmail: "james@superfan.demo" } : undefined}
           />
         </div>
       </div>

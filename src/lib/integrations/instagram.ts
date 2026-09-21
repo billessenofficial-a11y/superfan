@@ -124,9 +124,9 @@ export const instagramAdapter: IntegrationAdapter = {
   async mockConnect(): Promise<ConnectedAccount> {
     return {
       externalAccountId: "17841400000000001",
-      externalAccountName: "@lumavale",
+      externalAccountName: "@champagnepapi",
       scopes: INSTAGRAM_SCOPES,
-      settings: { pageName: "Luma Vale", mock: true },
+      settings: { pageName: "Drake", mock: true },
     };
   },
 

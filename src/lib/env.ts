@@ -52,7 +52,7 @@ export const env = serverSchema.parse(raw);
 export const isProduction = env.NODE_ENV === "production";
 /**
  * Demo mode is an explicit opt-in (SUPERFAN_DEMO_MODE=true). It enables the
- * seeded Luma Vale workspace, one-click demo sign-in and the demo event menu.
+ * seeded Drake demo workspace, one-click demo sign-in and the demo event menu.
  * Never enable it on a deployment that holds real fan data.
  */
 export const isDemoMode = env.SUPERFAN_DEMO_MODE;

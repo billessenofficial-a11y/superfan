@@ -80,13 +80,13 @@ export function LoginForm({ mode, next, artistName, demo }: Props) {
               loading={demoPending}
               onClick={() => startDemo(async () => void (await demoSignIn({ email: demo.artistEmail, next: mode === "fan" && next ? next : "/app" })))}
             >
-              Artist dashboard · Luma Vale
+              Artist dashboard · Drake
             </Button>
             <Button
               variant="secondary"
               size="sm"
               loading={demoPending}
-              onClick={() => startDemo(async () => void (await demoSignIn({ email: demo.fanEmail, next: next && next !== "/app" ? next : "/fan/luma-vale" })))}
+              onClick={() => startDemo(async () => void (await demoSignIn({ email: demo.fanEmail, next: next && next !== "/app" ? next : "/fan/drake" })))}
             >
               Fan passport · James Rellera
             </Button>
