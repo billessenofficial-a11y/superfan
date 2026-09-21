@@ -77,6 +77,8 @@ export interface IntegrationAdapter {
 
   /** Mock connection used when credentials are absent (demo mode). */
   mockConnect?(artistId: string): Promise<ConnectedAccount>;
+  /** Populate sample data right after a mock connection so dashboards have something to show. */
+  seedSample?(artistId: string): Promise<void>;
 
   disconnect(integration: IntegrationRow): Promise<void>;
   sync?(integration: IntegrationRow): Promise<SyncResult>;

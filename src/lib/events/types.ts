@@ -52,6 +52,8 @@ export const EVENT_TYPES = {
 
   spotifyArtistTop: "spotify.artist_top",
   spotifyRecentPlay: "spotify.recent_play_observed",
+  /** Weekly roll-up of a fan's plays of the artist's catalogue. */
+  spotifyStream: "spotify.stream",
   tiktokConnected: "tiktok.connected",
 
   csvMerchPurchase: "csv.merch_purchase",

@@ -1,32 +1,59 @@
 import { env, features } from "@/lib/env";
 import { EVENT_TYPES, type FanEventInput } from "@/lib/events/types";
+import { seedSampleStreaming } from "@/lib/streaming/queries";
 import type { AuthorizationContext, CallbackContext, ConnectedAccount, IntegrationAdapter, ProviderAvailability } from "./types";
 
 export const SPOTIFY_SCOPES = ["user-top-read", "user-read-recently-played"];
 
 /**
- * Spotify — experimental, fan-scoped.
+ * Spotify — experimental.
  *
- * Fans (not artists) authorize Superfan to read their top artists and
- * recently played tracks. Availability depends on Spotify platform approval:
- * in Development Mode an app can only authorize a handful of allow-listed
- * users, and Extended Quota requires an established, launched service.
+ * Two halves, neither generally available yet:
  *
- * We never claim lifetime stream counts; only "artist appears in your top
- * artists" and "recent listening observed" are derived, both heavily capped.
+ *  1. Artist-level streaming metrics (streams, listeners, followers, top
+ *     tracks). Spotify for Artists has no public API, so until a partner
+ *     integration exists the adapter connects in mock mode and fills the
+ *     `streaming_daily` table with clearly-labelled sample data. That lets
+ *     the dashboard be designed and demoed against realistic shapes.
+ *  2. Fan-level listening. Fans authorize Superfan to read their top artists
+ *     and recently played tracks. In Development Mode an app can only
+ *     authorize a handful of allow-listed users; Extended Quota requires an
+ *     established, launched service.
+ *
+ * We never claim lifetime stream counts per fan; only "artist appears in
+ * your top artists" and weekly play roll-ups are derived, both heavily capped
+ * by the scoring rules.
  */
 export const spotifyAdapter: IntegrationAdapter = {
   provider: "spotify",
   displayName: "Spotify",
-  description: "Fans can connect Spotify to verify listening affinity.",
-  capabilities: ["Artist appears in fan's top artists", "Recently played tracks (last 50)"],
-  doesNotTrack: ["Lifetime stream counts", "Full listening history", "Playlists or library"],
+  description: "Streams, listeners, followers and top tracks, plus verified listening from fans who link Spotify.",
+  capabilities: ["Daily streams, listeners and followers", "Top tracks", "Artist appears in fan's top artists", "Weekly play roll-ups per linked fan"],
+  doesNotTrack: ["Lifetime stream counts per fan", "Full listening history", "Playlists or library"],
 
   availability(): ProviderAvailability {
     if (features.spotify) {
-      return { mode: "live", experimental: true, scope: "fan", note: "Configured. Only users allow-listed in your Spotify app (Development Mode) or approved via Extended Quota can connect." };
+      return { mode: "live", experimental: true, scope: "artist", note: "Configured. Fan linking is limited to users allow-listed in your Spotify app (Development Mode) or approved via Extended Quota. Artist metrics still need Spotify for Artists partner access." };
     }
-    return { mode: "unavailable", experimental: true, scope: "fan", note: "Requires Spotify developer approval for production scale. Set SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET to enable the connection flow." };
+    return {
+      mode: "mock",
+      experimental: true,
+      scope: "artist",
+      note: "Spotify for Artists has no public API yet. Connect in sample mode to see the streaming dashboard with generated data; live sync activates once partner access and SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET are in place.",
+    };
+  },
+
+  async mockConnect(): Promise<ConnectedAccount> {
+    return {
+      externalAccountId: "spotify:artist:sample",
+      externalAccountName: "Spotify for Artists (sample)",
+      scopes: [],
+      settings: { sample: true },
+    };
+  },
+
+  async seedSample(artistId: string) {
+    await seedSampleStreaming(artistId);
   },
 
   getAuthorizationUrl(ctx: AuthorizationContext) {

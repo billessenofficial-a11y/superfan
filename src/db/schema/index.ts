@@ -6,3 +6,4 @@ export * from "./scoring";
 export * from "./engagement";
 export * from "./crm";
 export * from "./system";
+export * from "./streaming";

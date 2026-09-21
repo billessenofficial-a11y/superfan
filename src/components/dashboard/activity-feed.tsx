@@ -22,6 +22,7 @@ export function activityMetaLine(event: ActivityRowData["event"]): string | null
   }
   if (typeof m.refundedCents === "number") return `Refunded ${formatMoney(m.refundedCents)}`;
   if (event.type.startsWith("instagram.comment") && typeof m.text === "string" && m.text.trim()) return `“${truncate(m.text.trim(), 90)}”`;
+  if (event.type === "spotify.stream" && typeof m.plays === "number") return `${m.plays} plays${typeof m.topTrack === "string" ? ` · ${m.topTrack}` : ""}`;
   if (typeof m.eventName === "string") return String(m.eventName);
   if (typeof m.points === "number" && typeof m.reason === "string") return m.reason;
   if (typeof m.sourceLabel === "string") return m.sourceLabel;

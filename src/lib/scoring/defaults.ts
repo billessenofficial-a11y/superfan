@@ -49,7 +49,7 @@ export const DEFAULT_SCORE_RULES: DefaultScoreRule[] = [
 
   // Experimental providers (only fire when the integration is approved & connected).
   { key: "spotify.artist_top", label: "Artist appears in Spotify top artists", category: "Spotify", dimension: "engagement", points: 100, capPoints: 100, capWindow: "lifetime" },
-  { key: "spotify.recent_play", label: "Observed recent listening", category: "Spotify", dimension: "engagement", points: 5, capPoints: 25, capWindow: "week" },
+  { key: "spotify.recent_play", label: "Streams (weekly roll-up)", category: "Spotify", dimension: "engagement", points: 5, capPoints: 25, capWindow: "week" },
   { key: "tiktok.connected", label: "Connected TikTok", category: "TikTok", dimension: "community", points: 10, capPoints: 10, capWindow: "lifetime" },
 ];
 

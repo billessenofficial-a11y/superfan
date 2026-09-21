@@ -424,6 +424,7 @@ export async function scoreEvent(
       push(await applyRule(tx, rules, { ...base, ruleKey: "spotify.artist_top" }));
       break;
     case EVENT_TYPES.spotifyRecentPlay:
+    case EVENT_TYPES.spotifyStream:
       push(await applyRule(tx, rules, { ...base, ruleKey: "spotify.recent_play" }));
       break;
     case EVENT_TYPES.tiktokConnected:

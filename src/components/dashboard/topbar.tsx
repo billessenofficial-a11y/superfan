@@ -7,9 +7,11 @@ import { switchArtist } from "@/lib/actions/auth";
 import { Avatar } from "@/components/ui/avatar";
 import { Dialog, DialogTrigger, SheetContent } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import type { Theme } from "@/lib/theme";
 import { SidebarNav } from "./sidebar";
 import { DemoMenu } from "./demo-menu";
 import { FanSearch } from "./fan-search";
+import { ThemeToggle } from "./theme-toggle";
 
 export type ShellProps = {
   artist: { id: string; name: string; slug: string; avatarUrl: string | null };
@@ -17,6 +19,7 @@ export type ShellProps = {
   user: { email: string; displayName: string | null; avatarUrl: string | null };
   role: string;
   demoMode: boolean;
+  theme: Theme;
 };
 
 export function ArtistSwitcher({ artist, memberships, compact = false }: Pick<ShellProps, "artist" | "memberships"> & { compact?: boolean }) {
@@ -106,6 +109,7 @@ export function MobileTopbar(props: ShellProps) {
         <ArtistSwitcher artist={props.artist} memberships={props.memberships} compact />
       </div>
       <FanSearch trigger={<span className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"><Search className="size-5" /></span>} />
+      <ThemeToggle theme={props.theme} />
       <UserMenu user={props.user} role={props.role} />
     </header>
   );

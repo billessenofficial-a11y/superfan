@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, CalendarDays, Gift, LayoutDashboard, Megaphone, Plug, Settings, SlidersHorizontal, Target, Users } from "lucide-react";
+import { Activity, CalendarDays, Gift, LayoutDashboard, Megaphone, Plug, Radio, Settings, SlidersHorizontal, Target, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const NAV = [
@@ -10,6 +10,7 @@ export const NAV = [
   { href: "/app/fans", label: "Fans", icon: Users },
   { href: "/app/segments", label: "Segments", icon: SlidersHorizontal },
   { href: "/app/activity", label: "Activity", icon: Activity },
+  { href: "/app/streaming", label: "Streaming", icon: Radio },
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/app/challenges", label: "Challenges", icon: Target },
   { href: "/app/rewards", label: "Rewards", icon: Gift },

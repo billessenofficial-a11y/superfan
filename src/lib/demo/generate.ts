@@ -12,10 +12,13 @@ import { redeemReward } from "@/lib/rewards/redeem";
 import { resolveActor } from "@/lib/identity/resolver";
 import { touchIntegrationEvent } from "@/lib/integrations/store";
 import { awardPoints } from "@/lib/points/ledger";
+import { bumpStreamingToday } from "@/lib/streaming/queries";
+import { pickSampleTrack } from "@/lib/streaming/sample";
 
 export const DEMO_EVENT_KINDS = [
   { key: "instagram_comment", label: "Instagram comment", description: "A fan comments on a post" },
   { key: "merch_order", label: "Merch order", description: "A Shopify order comes in" },
+  { key: "spotify_streams", label: "Spotify streams", description: "A linked fan's weekly plays roll in and today's stream count moves" },
   { key: "concert_checkin", label: "Concert check-in", description: "A fan scans tonight's QR" },
   { key: "referral", label: "Referral", description: "A new fan joins via a referral link" },
   { key: "challenge_completion", label: "Challenge completion", description: "A fan finishes an active challenge" },
@@ -112,6 +115,28 @@ async function run(artistId: string, kind: DemoEventKind): Promise<DemoResult> {
       });
       await touchIntegrationEvent(artistId, "shopify");
       return { title: `${first} purchased ${product.title}`, detail: `$${(amountCents / 100).toFixed(2)} · +${res.scoreDelta} score · +${res.pointsAwarded} points`, fanId: res.fanId, href: res.fanId ? `/app/fans/${res.fanId}` : undefined };
+    }
+
+    case "spotify_streams": {
+      const fan = await randomFan(artistId);
+      if (!fan) return { title: "No fans yet", detail: "Import fans first.", fanId: null };
+      const plays = 4 + Math.floor(Math.random() * 36);
+      const track = pickSampleTrack();
+      const res = await ingestEvent({
+        artistId,
+        source: "spotify",
+        type: EVENT_TYPES.spotifyStream,
+        sourceEventId: `stream:demo_${fan.fan.id.slice(0, 8)}:${Date.now()}`,
+        fanId: fan.fan.id,
+        identity: { provider: "spotify", externalUserId: `sp_demo_${fan.fan.id.slice(0, 8)}`, username: (fan.fan.firstName ?? "fan").toLowerCase(), displayName: fanDisplayName(fan.fan) },
+        metadata: { plays, topTrack: track, demo: true, sample: true },
+        summary: `Streamed ${track} ${plays} times this week`,
+      });
+      // Identified listening is a sliver of total streams; move the headline number too.
+      const unidentified = 1500 + Math.floor(Math.random() * 4000);
+      const today = await bumpStreamingToday(artistId, { streams: plays + unidentified, track, saves: Math.floor(unidentified * 0.02) });
+      await touchIntegrationEvent(artistId, "spotify");
+      return { title: `${fanDisplayName(fan.fan)} streamed ${track} ${plays}×`, detail: `+${res.scoreDelta} score · today's streams now ${today.toLocaleString("en-US")}`, fanId: fan.fan.id, href: "/app/streaming" };
     }
 
     case "concert_checkin": {

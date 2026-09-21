@@ -57,6 +57,7 @@ export async function startConnect(input: {
   if (availability.mode === "mock" && adapter.mockConnect) {
     const account = await adapter.mockConnect(input.artistId);
     await saveConnectedAccount({ artistId: input.artistId, provider: input.provider, account, isMock: true, connectedByUserId: input.userId });
+    await adapter.seedSample?.(input.artistId);
     return { kind: "connected", mock: true };
   }
 

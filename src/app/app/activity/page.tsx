@@ -17,6 +17,7 @@ const CHIPS: Chip[] = [
   { key: "all", label: "All", filter: {} },
   { key: "instagram", label: "Instagram", filter: { source: "instagram" } },
   { key: "commerce", label: "Commerce", filter: { type: "shopify." } },
+  { key: "streaming", label: "Streaming", filter: { source: "spotify" } },
   { key: "events", label: "Events", filter: { type: "event." } },
   { key: "referrals", label: "Referrals", filter: { type: "fan.referral." } },
   { key: "challenges", label: "Challenges", filter: { type: "challenge." } },

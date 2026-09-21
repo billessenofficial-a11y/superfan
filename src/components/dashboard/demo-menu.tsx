@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { FlaskConical, Instagram, MapPin, Share2, ShoppingBag, Target, Trophy } from "lucide-react";
+import { FlaskConical, Instagram, MapPin, Radio, Share2, ShoppingBag, Target, Trophy } from "lucide-react";
 import { generateDemoEventAction } from "@/lib/actions/demo";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/toast";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 const KINDS = [
   { key: "instagram_comment", label: "Instagram comment", icon: Instagram },
   { key: "merch_order", label: "Merch order", icon: ShoppingBag },
+  { key: "spotify_streams", label: "Spotify streams", icon: Radio },
   { key: "concert_checkin", label: "Concert check-in", icon: MapPin },
   { key: "referral", label: "Referral", icon: Share2 },
   { key: "challenge_completion", label: "Challenge completion", icon: Target },

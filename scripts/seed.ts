@@ -23,6 +23,8 @@ import { checkInFan, newCheckinSecret } from "../src/lib/checkins";
 import { createClaimToken } from "../src/lib/claims";
 import { ingestEvent } from "../src/lib/events/ingest";
 import { EVENT_TYPES } from "../src/lib/events/types";
+import { pickSampleTrack } from "../src/lib/streaming/sample";
+import { seedSampleStreaming } from "../src/lib/streaming/queries";
 import { resolveActor } from "../src/lib/identity/resolver";
 import { saveConnectedAccount } from "../src/lib/integrations/store";
 import { recordReferral, tryQualifyReferral } from "../src/lib/referrals";
@@ -107,7 +109,7 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
   const igHandle = `${first}${pick([".", "_", ""])}${pick([last.slice(0, 4), "music", "lv", "afterlight", String(faker.number.int({ min: 1, max: 999 }))])}`.toLowerCase();
   const avatar = `https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(first + last + index)}&backgroundColor=c0aede,b6e3f4,ffd5dc,d1d4f9,ffdfbf`;
 
-  const stats = { comments: 0, orders: 0, attended: 0, referrals: 0, challenges: 0 };
+  const stats = { comments: 0, orders: 0, attended: 0, referrals: 0, challenges: 0, streams: 0 };
   let joined = false;
 
   await db.transaction(async (tx) => {
@@ -198,6 +200,31 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
     stats.attended++;
   }
 
+  // Spotify (linked fans get a weekly play roll-up for the last six weeks)
+  const spotifyProb = { icon: 0.9, superfan: 0.75, dedicated: 0.5, fan: 0.3, listener: 0.15 }[tier];
+  if (chance(spotifyProb)) {
+    const spotifyId = `sp_${faker.string.alphanumeric(12).toLowerCase()}`;
+    const favourite = pickSampleTrack();
+    const range = { icon: [20, 60], superfan: [12, 40], dedicated: [6, 25], fan: [3, 12], listener: [1, 6] }[tier];
+    for (let week = 0; week < 6; week++) {
+      if (!chance(0.7)) continue;
+      const plays = faker.number.int({ min: range[0], max: range[1] });
+      const track = chance(0.75) ? favourite : pickSampleTrack();
+      await ingestEvent({
+        artistId,
+        fanId,
+        source: "spotify",
+        type: EVENT_TYPES.spotifyStream,
+        sourceEventId: `stream:${spotifyId}:w${week}`,
+        occurredAt: daysAgo(week * 7 + Math.random() * 6),
+        identity: { provider: "spotify", externalUserId: spotifyId, username: `${first.toLowerCase()}${faker.number.int({ min: 10, max: 99 })}`, displayName: `${first} ${last}` },
+        metadata: { plays, topTrack: track, sample: true },
+        summary: plays > 1 ? `Streamed ${track} ${plays} times this week` : `Streamed ${track}`,
+      });
+      stats.streams += plays;
+    }
+  }
+
   return { fanId, email, first, last, code: af.code, tier, stats, joined };
 }
 
@@ -240,6 +267,8 @@ async function main() {
     await saveConnectedAccount({ artistId: artist.id, provider: "instagram", account: { externalAccountId: "17841400000000001", externalAccountName: "@lumavale", scopes: ["instagram_basic", "instagram_manage_comments", "instagram_manage_messages"], settings: { pageName: "Luma Vale" } }, isMock: true, connectedByUserId: founder.id });
     await saveConnectedAccount({ artistId: artist.id, provider: "shopify", account: { externalAccountId: "luma-store.myshopify.com", externalAccountName: "luma-store.myshopify.com", scopes: ["read_orders", "read_customers"], settings: { shopName: "Luma Vale Official Store" } }, isMock: true, connectedByUserId: founder.id });
     await saveConnectedAccount({ artistId: artist.id, provider: "ticketmaster", account: { externalAccountId: "discovery", externalAccountName: "Event Discovery" }, isMock: true, connectedByUserId: founder.id });
+    await saveConnectedAccount({ artistId: artist.id, provider: "spotify", account: { externalAccountId: "spotify:artist:sample", externalAccountName: "Spotify for Artists (sample)", settings: { sample: true } }, isMock: true, connectedByUserId: founder.id });
+    await seedSampleStreaming(artist.id, db);
 
     // Events: two past, one tonight, one upcoming.
     const eventRows = await db
@@ -362,6 +391,11 @@ async function main() {
         const orderId = faker.string.numeric(7);
         await ingestEvent({ artistId: artist.id, fanId: actor.fanId, source: "shopify", type: EVENT_TYPES.shopifyOrderCreated, sourceEventId: `order:${orderId}`, occurredAt: daysAgo(o.d), email: DEMO.fanEmail, identity: { provider: "shopify", externalUserId: "customer_8841", username: DEMO.fanEmail, displayName: "James Rellera" }, metadata: { orderId, orderName: `#${orderId}`, amountCents: o.p, currency: "USD", items: [{ title: o.t, quantity: 1, priceCents: o.p }] }, summary: `Purchased ${o.t}` }, tx);
       }
+      for (let week = 0; week < 8; week++) {
+        const plays = 28 + faker.number.int({ min: 0, max: 30 });
+        const track = week % 3 === 0 ? "Neon Tide" : "Afterlight";
+        await ingestEvent({ artistId: artist.id, fanId: actor.fanId, source: "spotify", type: EVENT_TYPES.spotifyStream, sourceEventId: `stream:sp_james:w${week}`, occurredAt: daysAgo(week * 7 + 1), identity: { provider: "spotify", externalUserId: "sp_james_rellera", username: "jamesrellera", displayName: "James Rellera" }, metadata: { plays, topTrack: track, sample: true }, summary: `Streamed ${track} ${plays} times this week` }, tx);
+      }
       return actor.fanId;
     });
     for (const ev of eventRows.slice(0, 5)) await checkInFan({ eventId: ev.id, fanId: james, method: "qr", now: new Date(ev.startsAt.getTime() + 20 * 60_000) });
@@ -413,7 +447,7 @@ async function main() {
     console.log(`
 ✔ Seeded Luma Vale
    fans: ${counts.fans}  superfans: ${counts.superfans}  identities: ${identities}
-   referrals: ${referralsMade}  redemptions: ${redemptions}
+   referrals: ${referralsMade}  redemptions: ${redemptions}  spotify-linked fans: ${seeded.filter((f) => f.stats.streams > 0).length}
 
 Sign in (magic links print to this console when email is not configured):
    Artist dashboard → ${DEMO.founderEmail}

@@ -51,10 +51,10 @@ const TONE_TEXT: Record<IntegrationCardData["status"]["tone"], string> = {
 };
 
 const BRAND_BG: Record<IntegrationProvider, string> = {
-  instagram: "bg-gradient-to-br from-pink-500/25 to-orange-400/25 text-pink-300",
-  shopify: "bg-emerald-500/15 text-emerald-300",
-  ticketmaster: "bg-sky-500/15 text-sky-300",
-  spotify: "bg-green-500/15 text-green-300",
+  instagram: "bg-gradient-to-br from-pink-500/25 to-orange-400/25 text-pink-600 dark:text-pink-300",
+  shopify: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  ticketmaster: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
+  spotify: "bg-green-500/15 text-green-700 dark:text-green-300",
   tiktok: "bg-foreground/10 text-foreground",
 };
 
