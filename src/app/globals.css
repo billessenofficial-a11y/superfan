@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────
+ * Design tokens
+ * Light theme for public + fan pages (artist accent can override),
+ * dark theme for the artist dashboard. Apple Music × Linear.
+ * ───────────────────────────────────────────────────────────── */
+:root {
+  --background: #fafafa;
+  --foreground: #0a0a0b;
+  --card: #ffffff;
+  --card-foreground: #0a0a0b;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0b;
+  --muted: #f2f2f4;
+  --muted-foreground: #6b6b76;
+  --subtle: #8a8a94;
+  --border: rgba(10, 10, 11, 0.08);
+  --border-strong: rgba(10, 10, 11, 0.16);
+  --input: rgba(10, 10, 11, 0.1);
+  --ring: #8b5cf6;
+  --primary: #0a0a0b;
+  --primary-foreground: #ffffff;
+  --accent: #8b5cf6;
+  --accent-foreground: #ffffff;
+  --accent-soft: rgba(139, 92, 246, 0.12);
+  --success: #16a34a;
+  --success-soft: rgba(22, 163, 74, 0.12);
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.14);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.12);
+  --info: #2563eb;
+  --info-soft: rgba(37, 99, 235, 0.12);
+  --radius: 14px;
+  --shadow-card: 0 1px 2px rgba(10, 10, 11, 0.04), 0 8px 24px -12px rgba(10, 10, 11, 0.12);
+  --artist-accent: #8b5cf6;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --card: #111113;
+  --card-foreground: #f4f4f5;
+  --popover: #16161a;
+  --popover-foreground: #f4f4f5;
+  --muted: #1a1a1f;
+  --muted-foreground: #a1a1aa;
+  --subtle: #71717a;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #a78bfa;
+  --primary: #f4f4f5;
+  --primary-foreground: #09090b;
+  --accent: #a78bfa;
+  --accent-foreground: #09090b;
+  --accent-soft: rgba(167, 139, 250, 0.16);
+  --success: #4ade80;
+  --success-soft: rgba(74, 222, 128, 0.14);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.14);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.14);
+  --info: #60a5fa;
+  --info-soft: rgba(96, 165, 250, 0.14);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-artist: var(--artist-accent);
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 12px);
+
+  --shadow-card: var(--shadow-card);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --animate-fade-in: fade-in 0.35s ease-out both;
+  --animate-rise: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01", "tnum";
+  }
+  ::selection {
+    background: var(--accent-soft);
+  }
+  button, [role="button"] {
+    cursor: pointer;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .glass {
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+  .gradient-text {
+    background: linear-gradient(120deg, var(--artist-accent), color-mix(in oklab, var(--artist-accent) 55%, #f472b6));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .artist-gradient {
+    background:
+      radial-gradient(120% 80% at 10% 0%, color-mix(in oklab, var(--artist-accent) 70%, transparent) 0%, transparent 60%),
+      radial-gradient(90% 70% at 100% 100%, color-mix(in oklab, var(--artist-accent) 45%, #f472b6) 0%, transparent 60%),
+      linear-gradient(180deg, color-mix(in oklab, var(--artist-accent) 20%, #0a0a0b), #0a0a0b);
+  }
+  .card-surface {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+  }
+  .shimmer {
+    background: linear-gradient(90deg, var(--muted) 25%, color-mix(in oklab, var(--muted) 60%, var(--foreground) 5%) 50%, var(--muted) 75%);
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+}

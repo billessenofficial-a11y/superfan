@@ -108,6 +108,7 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
   const avatar = `https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(first + last + index)}&backgroundColor=c0aede,b6e3f4,ffd5dc,d1d4f9,ffdfbf`;
 
   const stats = { comments: 0, orders: 0, attended: 0, referrals: 0, challenges: 0 };
+  let joined = false;
 
   await db.transaction(async (tx) => {
     const actor = await resolveActor(tx, {
@@ -122,7 +123,8 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
     await tx.update(artistFans).set({ firstSource: pick(["superfan", "csv", "shopify", "instagram"] as const) }).where(and(eq(artistFans.artistId, artistId), eq(artistFans.fanId, fanId)));
 
     const joinProb = { icon: 1, superfan: 0.95, dedicated: 0.85, fan: 0.6, listener: 0.35 }[tier];
-    if (chance(joinProb)) {
+    joined = chance(joinProb);
+    if (joined) {
       await ingestEvent({ artistId, fanId, source: "superfan", type: EVENT_TYPES.fanJoined, sourceEventId: `join:${fanId}`, occurredAt: joinedAt, metadata: {}, summary: "Joined the fan club" }, tx);
     } else {
       await ingestEvent({ artistId, fanId, source: "csv", type: EVENT_TYPES.csvFanImported, sourceEventId: `seed_import:${fanId}`, occurredAt: joinedAt, verification: "imported", metadata: { sourceLabel: "2025 mailing list" }, summary: "Imported from 2025 mailing list" }, tx);
@@ -154,7 +156,7 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
     }
 
     // Merch
-    const orderCount = { icon: 3 + Math.floor(Math.random() * 4), superfan: 1 + Math.floor(Math.random() * 3), dedicated: chance(0.55) ? 1 + Math.floor(Math.random() * 2) : 0, fan: chance(0.2) ? 1 : 0, listener: chance(0.04) ? 1 : 0 }[tier];
+    const orderCount = { icon: 6 + Math.floor(Math.random() * 4), superfan: 2 + Math.floor(Math.random() * 3), dedicated: chance(0.55) ? 1 + Math.floor(Math.random() * 2) : 0, fan: chance(0.2) ? 1 : 0, listener: chance(0.04) ? 1 : 0 }[tier];
     for (let i = 0; i < orderCount; i++) {
       const items = [pick(PRODUCTS)];
       if (chance(0.3)) items.push(pick(PRODUCTS));
@@ -185,7 +187,7 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
 
   // Concerts (past events only)
   const past = events.filter((e) => e.startsAt.getTime() < now);
-  const attendCount = { icon: Math.min(past.length, 2 + Math.floor(Math.random() * 2)), superfan: chance(0.8) ? 1 + Math.floor(Math.random() * 2) : 0, dedicated: chance(0.35) ? 1 : 0, fan: chance(0.08) ? 1 : 0, listener: 0 }[tier];
+  const attendCount = { icon: past.length, superfan: chance(0.9) ? 2 + Math.floor(Math.random() * 2) : 1, dedicated: chance(0.45) ? 1 + (chance(0.3) ? 1 : 0) : 0, fan: chance(0.1) ? 1 : 0, listener: chance(0.02) ? 1 : 0 }[tier];
   const chosen = faker.helpers.arrayElements(past, Math.min(attendCount, past.length));
   for (const ev of chosen) {
     if (chance(0.7)) {
@@ -196,7 +198,7 @@ async function seedFan(db: Database, artistId: string, events: { id: string; nam
     stats.attended++;
   }
 
-  return { fanId, email, first, last, code: af.code, tier, stats };
+  return { fanId, email, first, last, code: af.code, tier, stats, joined };
 }
 
 async function main() {
@@ -233,7 +235,6 @@ async function main() {
       const [u] = await db.insert(users).values({ email: m.email, displayName: m.name }).returning();
       await db.insert(artistMembers).values({ artistId: artist.id, userId: u.id, role: m.role, acceptedAt: new Date(), invitedByUserId: founder.id });
     }
-    await db.update(artistFans).set({}).where(eq(artistFans.artistId, artist.id));
 
     // Integrations (mock connections).
     await saveConnectedAccount({ artistId: artist.id, provider: "instagram", account: { externalAccountId: "17841400000000001", externalAccountName: "@lumavale", scopes: ["instagram_basic", "instagram_manage_comments", "instagram_manage_messages"], settings: { pageName: "Luma Vale" } }, isMock: true, connectedByUserId: founder.id });
@@ -244,13 +245,16 @@ async function main() {
     const eventRows = await db
       .insert(artistEvents)
       .values([
+        { artistId: artist.id, name: "Glass Hours Tour — Los Angeles", venue: "The Fonda Theatre", city: "Los Angeles", region: "CA", country: "US", startsAt: daysAgo(340, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 1200, createdByUserId: founder.id },
+        { artistId: artist.id, name: "Glass Hours Tour — New York", venue: "Bowery Ballroom", city: "New York", region: "NY", country: "US", startsAt: daysAgo(325, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 575, createdByUserId: founder.id },
+        { artistId: artist.id, name: "Glass Hours Tour — Chicago", venue: "Metro", city: "Chicago", region: "IL", country: "US", startsAt: daysAgo(310, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 1100, createdByUserId: founder.id },
         { artistId: artist.id, name: "Afterlight Tour — Los Angeles", venue: "The Wiltern", city: "Los Angeles", region: "CA", country: "US", startsAt: daysAgo(24, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 2300, createdByUserId: founder.id },
         { artistId: artist.id, name: "Afterlight Tour — New York", venue: "Brooklyn Steel", city: "New York", region: "NY", country: "US", startsAt: daysAgo(9, 0), status: "completed", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 1800, createdByUserId: founder.id },
         { artistId: artist.id, name: "Afterlight Tour — Los Angeles (Night 2)", venue: "The Wiltern", city: "Los Angeles", region: "CA", country: "US", startsAt: new Date(now + 2 * 3600_000), status: "upcoming", checkinOpensAt: new Date(now - 3600_000), checkinClosesAt: new Date(now + 8 * 3600_000), checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 2300, createdByUserId: founder.id },
         { artistId: artist.id, name: "Afterlight Tour — London", venue: "O2 Academy Brixton", city: "London", country: "GB", startsAt: new Date(now + 21 * DAY), status: "upcoming", checkinSecret: newCheckinSecret(), checkinPoints: 500, capacity: 4900, createdByUserId: founder.id },
       ])
       .returning();
-    const tonight = eventRows[2];
+    const tonight = eventRows[5];
 
     // Challenges.
     const challengeRows = await db
@@ -298,17 +302,20 @@ async function main() {
 
     // Referrals: engaged fans refer newer ones (qualified when the referred fan is active).
     const referrers = seeded.filter((f) => f.tier === "icon" || f.tier === "superfan" || (f.tier === "dedicated" && chance(0.4)));
-    const referredPool = seeded.filter((f) => f.tier === "fan" || f.tier === "listener");
+    const referredPool = seeded.filter((f) => !f.joined);
+    const referredIds = new Set<string>();
     let referralsMade = 0;
     for (const referred of faker.helpers.arrayElements(referredPool, Math.min(80, referredPool.length))) {
       const referrer = pick(referrers);
       try {
         await db.transaction((tx) => recordReferral(tx, { artistId: artist.id, code: referrer.code, referredFanId: referred.fanId }));
+        await ingestEvent({ artistId: artist.id, fanId: referred.fanId, source: "superfan", type: EVENT_TYPES.fanJoined, sourceEventId: `join:${referred.fanId}`, occurredAt: daysAgo(Math.random() * 25), metadata: { via: "referral" }, summary: "Joined the fan club" });
         if (chance(0.85)) {
           await completeChallenge({ artistId: artist.id, fanId: referred.fanId, challengeId: challengeRows[0].id }).catch(() => undefined);
           await tryQualifyReferral({ artistId: artist.id, referredFanId: referred.fanId });
         }
         referralsMade++;
+        referredIds.add(referred.fanId);
       } catch {
         /* self-referral or already referred */
       }
@@ -357,14 +364,14 @@ async function main() {
       }
       return actor.fanId;
     });
-    for (const ev of eventRows.slice(0, 2)) await checkInFan({ eventId: ev.id, fanId: james, method: "qr", now: new Date(ev.startsAt.getTime() + 20 * 60_000) });
+    for (const ev of eventRows.slice(0, 5)) await checkInFan({ eventId: ev.id, fanId: james, method: "qr", now: new Date(ev.startsAt.getTime() + 20 * 60_000) });
     await ingestEvent({ artistId: artist.id, fanId: james, source: "csv", type: EVENT_TYPES.eventAttendanceImported, sourceEventId: `attend:2025:${james}`, occurredAt: daysAgo(300), verification: "imported", metadata: { eventName: "Glass Hours Tour — Los Angeles" }, summary: "Attended Glass Hours Tour — Los Angeles" });
     for (const c of [challengeRows[0], challengeRows[3], challengeRows[4], challengeRows[5]]) {
       const submission = c.type === "quiz" ? { answers: { q1: 1, q2: 1, q3: 2, q4: 1 } } : c.type === "promo_code" ? { code: "AFTERLIGHT" } : c.type === "form_submission" ? { fields: { city: "Los Angeles", why: "Been here since Glass Hours." } } : {};
       await completeChallenge({ artistId: artist.id, fanId: james, challengeId: c.id, submission }).catch(() => undefined);
     }
     const [jamesAf] = await db.select().from(artistFans).where(and(eq(artistFans.artistId, artist.id), eq(artistFans.fanId, james)));
-    for (const referred of faker.helpers.arrayElements(referredPool.filter((r) => r.tier === "listener"), 4)) {
+    for (const referred of faker.helpers.arrayElements(referredPool.filter((r) => !referredIds.has(r.fanId)), 4)) {
       try {
         await db.transaction((tx) => recordReferral(tx, { artistId: artist.id, code: jamesAf.referralCode, referredFanId: referred.fanId }));
         await completeChallenge({ artistId: artist.id, fanId: referred.fanId, challengeId: challengeRows[0].id }).catch(() => undefined);

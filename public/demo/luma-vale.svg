@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <radialGradient id="a" cx="30%" cy="20%" r="90%">
+      <stop offset="0" stop-color="#c4b5fd"/>
+      <stop offset="0.5" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </radialGradient>
+    <radialGradient id="b" cx="75%" cy="80%" r="60%">
+      <stop offset="0" stop-color="#f472b6" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#f472b6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#a)"/>
+  <rect width="256" height="256" fill="url(#b)"/>
+  <circle cx="128" cy="128" r="62" fill="none" stroke="#fff" stroke-opacity="0.35" stroke-width="2"/>
+  <circle cx="128" cy="128" r="40" fill="none" stroke="#fff" stroke-opacity="0.6" stroke-width="2"/>
+  <circle cx="128" cy="128" r="14" fill="#fff" fill-opacity="0.95"/>
+  <text x="128" y="222" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="22" font-weight="600" fill="#fff" letter-spacing="6">LUMA VALE</text>
+</svg>
