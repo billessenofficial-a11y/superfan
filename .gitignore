@@ -1,0 +1,41 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# next.js
+.next
+out
+next-env.d.ts
+
+# production
+build
+dist
+
+# misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env — never commit real secrets
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# vercel
+.vercel
+
+# supabase local
+supabase/.branches
+supabase/.temp
+
+# coverage
+coverage
