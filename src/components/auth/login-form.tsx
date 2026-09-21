@@ -78,7 +78,7 @@ export function LoginForm({ mode, next, artistName, demo }: Props) {
               variant="secondary"
               size="sm"
               loading={demoPending}
-              onClick={() => startDemo(async () => void (await demoSignIn({ email: demo.artistEmail, next: "/app" })))}
+              onClick={() => startDemo(async () => void (await demoSignIn({ email: demo.artistEmail, next: mode === "fan" && next ? next : "/app" })))}
             >
               Artist dashboard · Luma Vale
             </Button>
@@ -86,7 +86,7 @@ export function LoginForm({ mode, next, artistName, demo }: Props) {
               variant="secondary"
               size="sm"
               loading={demoPending}
-              onClick={() => startDemo(async () => void (await demoSignIn({ email: demo.fanEmail, next: "/fan/luma-vale" })))}
+              onClick={() => startDemo(async () => void (await demoSignIn({ email: demo.fanEmail, next: next && next !== "/app" ? next : "/fan/luma-vale" })))}
             >
               Fan passport · James Rellera
             </Button>

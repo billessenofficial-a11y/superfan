@@ -8,9 +8,7 @@ export type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 export type DbOrTx = Database | Transaction;
 
 declare global {
-  // eslint-disable-next-line no-var
   var __superfanSql: ReturnType<typeof postgres> | undefined;
-  // eslint-disable-next-line no-var
   var __superfanDb: Database | undefined;
 }
 

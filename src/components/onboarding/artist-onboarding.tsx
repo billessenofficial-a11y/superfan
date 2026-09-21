@@ -28,10 +28,6 @@ export function ArtistOnboarding({ hasArtist }: { hasArtist: boolean }) {
   const [connected, setConnected] = React.useState<Record<string, boolean>>({});
   const [connecting, setConnecting] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    if (!slugTouched) setSlug(slugify(name));
-  }, [name, slugTouched]);
-
   const create = () =>
     start(async () => {
       const res = await createArtistAction({ name, slug, genre: genre || undefined, country: country || undefined, accentColor: accent });
@@ -95,7 +91,17 @@ export function ArtistOnboarding({ hasArtist }: { hasArtist: boolean }) {
             }}
           >
             <Field label="Artist name" htmlFor="name">
-              <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Luma Vale" autoFocus />
+              <Input
+                id="name"
+                required
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (!slugTouched) setSlug(slugify(e.target.value));
+                }}
+                placeholder="Luma Vale"
+                autoFocus
+              />
             </Field>
             <Field label="Artist URL" htmlFor="slug" hint={`superfan.app/artists/${slug || "your-name"}`}>
               <Input

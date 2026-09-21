@@ -38,6 +38,7 @@ describe("webhook normalization + processing", () => {
       line_items: [{ title: "Afterlight Tour Hoodie", quantity: 1, price: "85.00" }],
     };
     const headers = { "x-shopify-topic": "orders/create", "x-shopify-shop-domain": shop };
+    const wh = `wh-${artist.id.slice(0, 8)}`;
 
     const events = await shopifyAdapter.normalizeWebhook!(payload, { integration: null, artistId: artist.id, headers });
     expect(events).toHaveLength(1);
@@ -45,9 +46,9 @@ describe("webhook normalization + processing", () => {
     expect(events[0].metadata?.amountCents).toBe(8500);
     expect(events[0].identity?.externalUserId).toBe("8841");
 
-    const first = await processWebhook({ provider: "shopify", artistId: artist.id, externalEventId: "wh-1", topic: "orders/create", payload, headers });
-    const second = await processWebhook({ provider: "shopify", artistId: artist.id, externalEventId: "wh-1", topic: "orders/create", payload, headers });
-    const third = await processWebhook({ provider: "shopify", artistId: artist.id, externalEventId: "wh-2", topic: "orders/create", payload, headers });
+    const first = await processWebhook({ provider: "shopify", artistId: artist.id, externalEventId: `${wh}-1`, topic: "orders/create", payload, headers });
+    const second = await processWebhook({ provider: "shopify", artistId: artist.id, externalEventId: `${wh}-1`, topic: "orders/create", payload, headers });
+    const third = await processWebhook({ provider: "shopify", artistId: artist.id, externalEventId: `${wh}-2`, topic: "orders/create", payload, headers });
     expect(first).toMatchObject({ status: "processed", produced: 1 });
     expect(second.status).toBe("duplicate");
     expect(third).toMatchObject({ status: "processed", produced: 0 }); // same order id → event dedupe

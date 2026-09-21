@@ -45,15 +45,18 @@ const ICONS: Record<ToastKind, React.ReactNode> = {
   warning: <TriangleAlert className="size-4 text-warning" />,
 };
 
+function subscribe(listener: Listener) {
+  listeners.push(listener);
+  return () => {
+    listeners = listeners.filter((l) => l !== listener);
+  };
+}
+const getSnapshot = () => items;
+const getServerSnapshot = (): ToastItem[] => EMPTY;
+const EMPTY: ToastItem[] = [];
+
 export function Toaster() {
-  const [list, setList] = React.useState<ToastItem[]>([]);
-  React.useEffect(() => {
-    listeners.push(setList);
-    setList(items);
-    return () => {
-      listeners = listeners.filter((l) => l !== setList);
-    };
-  }, []);
+  const list = React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   if (list.length === 0) return null;
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4 sm:items-end sm:px-6">

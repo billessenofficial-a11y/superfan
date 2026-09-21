@@ -32,13 +32,9 @@ export function FanSearch({ trigger }: { trigger?: React.ReactNode }) {
   }, []);
 
   React.useEffect(() => {
-    if (!open) return;
-    if (q.trim().length < 2) {
-      setResults([]);
-      return;
-    }
-    setLoading(true);
+    if (!open || q.trim().length < 2) return;
     const t = setTimeout(async () => {
+      setLoading(true);
       const res = await searchFansAction({ query: q });
       setLoading(false);
       setResults(res.ok ? res.data : []);
@@ -71,7 +67,10 @@ export function FanSearch({ trigger }: { trigger?: React.ReactNode }) {
           <input
             autoFocus
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => {
+              setQ(e.target.value);
+              if (e.target.value.trim().length < 2) setResults([]);
+            }}
             onKeyDown={(e) => {
               if (e.key === "ArrowDown") setActive((a) => Math.min(results.length - 1, a + 1));
               if (e.key === "ArrowUp") setActive((a) => Math.max(0, a - 1));
