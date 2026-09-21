@@ -374,6 +374,7 @@ async function main() {
     for (const referred of faker.helpers.arrayElements(referredPool.filter((r) => !referredIds.has(r.fanId)), 4)) {
       try {
         await db.transaction((tx) => recordReferral(tx, { artistId: artist.id, code: jamesAf.referralCode, referredFanId: referred.fanId }));
+        await ingestEvent({ artistId: artist.id, fanId: referred.fanId, source: "superfan", type: EVENT_TYPES.fanJoined, sourceEventId: `join:${referred.fanId}`, occurredAt: daysAgo(Math.random() * 20), metadata: { via: "referral" }, summary: "Joined the fan club" });
         await completeChallenge({ artistId: artist.id, fanId: referred.fanId, challengeId: challengeRows[0].id }).catch(() => undefined);
         await tryQualifyReferral({ artistId: artist.id, referredFanId: referred.fanId });
       } catch {

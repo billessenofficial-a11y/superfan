@@ -36,12 +36,19 @@ export type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & { asChild?: boolean; loading?: boolean };
 
 function Button({ className, variant, size, asChild = false, loading = false, children, disabled, ...props }: ButtonProps) {
-  const Comp = asChild ? Slot : "button";
+  if (asChild) {
+    // Slot needs exactly one element child; the loader is not supported here.
+    return (
+      <Slot data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props}>
+        {children}
+      </Slot>
+    );
+  }
   return (
-    <Comp data-slot="button" className={cn(buttonVariants({ variant, size, className }))} disabled={disabled || loading} {...props}>
+    <button data-slot="button" className={cn(buttonVariants({ variant, size, className }))} disabled={disabled || loading} {...props}>
       {loading ? <Loader2 className="animate-spin" /> : null}
       {children}
-    </Comp>
+    </button>
   );
 }
 
