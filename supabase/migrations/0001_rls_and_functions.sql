@@ -25,6 +25,15 @@ BEGIN
   END IF;
 END $$;--> statement-breakpoint
 
+-- Single indirection point for the authenticated user id. Policies and helper
+-- functions call this instead of auth.uid() directly so that, on Supabase,
+-- only this function (created by a role with USAGE on the auth schema) has to
+-- touch the auth schema. The app's own role does not need it.
+CREATE OR REPLACE FUNCTION public.auth_user_id() RETURNS uuid
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT auth.uid()
+$$;--> statement-breakpoint
+
 -- ── updated_at maintenance ─────────────────────────────────────
 CREATE OR REPLACE FUNCTION public.set_updated_at() RETURNS trigger
 LANGUAGE plpgsql AS $$
@@ -50,13 +59,13 @@ CREATE OR REPLACE FUNCTION public.is_artist_member(target_artist uuid) RETURNS b
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.artist_members m
-    WHERE m.artist_id = target_artist AND m.user_id = auth.uid()
+    WHERE m.artist_id = target_artist AND m.user_id = public.auth_user_id()
   )
 $$;--> statement-breakpoint
 
 CREATE OR REPLACE FUNCTION public.current_fan_id() RETURNS uuid
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
-  SELECT f.id FROM public.fans f WHERE f.user_id = auth.uid() AND f.merged_into_fan_id IS NULL LIMIT 1
+  SELECT f.id FROM public.fans f WHERE f.user_id = public.auth_user_id() AND f.merged_into_fan_id IS NULL LIMIT 1
 $$;--> statement-breakpoint
 
 -- ── ledger integrity ───────────────────────────────────────────
@@ -139,11 +148,11 @@ CREATE POLICY referrals_fan_select ON public.referrals FOR SELECT
 
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 DROP POLICY IF EXISTS users_self ON public.users;--> statement-breakpoint
-CREATE POLICY users_self ON public.users FOR SELECT USING (id = auth.uid());--> statement-breakpoint
+CREATE POLICY users_self ON public.users FOR SELECT USING (id = public.auth_user_id());--> statement-breakpoint
 
 ALTER TABLE public.fans ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 DROP POLICY IF EXISTS fans_self ON public.fans;--> statement-breakpoint
-CREATE POLICY fans_self ON public.fans FOR SELECT USING (user_id = auth.uid());--> statement-breakpoint
+CREATE POLICY fans_self ON public.fans FOR SELECT USING (user_id = public.auth_user_id());--> statement-breakpoint
 DROP POLICY IF EXISTS fans_member_select ON public.fans;--> statement-breakpoint
 CREATE POLICY fans_member_select ON public.fans FOR SELECT USING (
   EXISTS (SELECT 1 FROM public.artist_fans af WHERE af.fan_id = fans.id AND public.is_artist_member(af.artist_id))
@@ -156,7 +165,7 @@ CREATE POLICY artists_public_read ON public.artists FOR SELECT USING (true);--> 
 ALTER TABLE public.artist_members ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 DROP POLICY IF EXISTS artist_members_self ON public.artist_members;--> statement-breakpoint
 CREATE POLICY artist_members_self ON public.artist_members FOR SELECT
-  USING (user_id = auth.uid() OR public.is_artist_member(artist_id));--> statement-breakpoint
+  USING (user_id = public.auth_user_id() OR public.is_artist_member(artist_id));--> statement-breakpoint
 
 ALTER TABLE public.badges ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 DROP POLICY IF EXISTS badges_read ON public.badges;--> statement-breakpoint

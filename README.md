@@ -146,7 +146,7 @@ See [`.env.example`](.env.example). Everything except `DATABASE_URL` is optional
 | --- | --- |
 | `DATABASE_URL` | Postgres connection string |
 | `NEXT_PUBLIC_APP_URL` | Public base URL (used in magic links, QR codes, referral links, OAuth callbacks) |
-| `SUPERFAN_DEMO_MODE` | Enables demo sign-in and the Generate Demo Event menu (never in production) |
+| `SUPERFAN_DEMO_MODE` | Enables demo sign-in and the Generate Demo Event menu. Explicit opt-in; never set it on a deployment holding real fan data |
 | `SUPERFAN_SIGNING_SECRET` | HMAC secret for claim/check-in tokens and local sessions (`openssl rand -hex 32`) |
 | `SUPERFAN_ENCRYPTION_KEY` | 32-byte hex key for encrypting provider tokens at rest |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Supabase Auth (+ admin) |
@@ -229,13 +229,30 @@ Raw deliveries are visible in the `webhook_events` table with their processing s
 
 ---
 
-## Deployment to Vercel
+## Deployment
 
-1. Push the repo and import it in Vercel (framework preset: Next.js).
+Works on any host that runs Next.js server code. `netlify.toml` is included; Vercel needs no config.
+
+1. Push the repo and import it (framework preset: Next.js).
 2. Add the environment variables above (at minimum `DATABASE_URL`, `NEXT_PUBLIC_APP_URL`, `SUPERFAN_SIGNING_SECRET`, `SUPERFAN_ENCRYPTION_KEY`, Supabase and Resend keys). Leave `SUPERFAN_DEMO_MODE` unset in production.
 3. Run migrations against the production database from your machine or CI: `DATABASE_URL=... npm run db:migrate`.
 4. Point provider callback/webhook URLs at the production domain.
 5. Webhook routes run on the Node.js runtime; keep them excluded from any auth middleware (already excluded in `src/proxy.ts`).
+
+### Supabase as the database
+
+- Use the **session/transaction pooler** connection string (`*.pooler.supabase.com`) for serverless hosts; the direct `db.*.supabase.co` host is IPv6-only.
+- The app connects with a dedicated role that **owns** the tables (so it bypasses RLS like a service role would). Create it once, then run migrations as that role:
+  ```sql
+  CREATE ROLE superfan_app LOGIN PASSWORD '...';
+  GRANT CREATE, CONNECT, TEMP ON DATABASE postgres TO superfan_app;
+  GRANT ALL ON SCHEMA public TO superfan_app;
+  ```
+- RLS policies reference `auth.uid()` only through `public.auth_user_id()`, which must be created by a role with `USAGE` on the `auth` schema (`postgres` in the Supabase SQL editor). Everything else in the migrations runs as the app role.
+
+### Hosted demo
+
+A demo deployment is just the above plus `SUPERFAN_DEMO_MODE=true` and the seed data. Seed from a machine that can reach the database (`DATABASE_URL=... npm run db:seed`), or load a `pg_dump --data-only --inserts` of a locally seeded database.
 
 ---
 

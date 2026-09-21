@@ -1,0 +1,12 @@
+# Netlify deployment. The Next.js runtime is auto-detected; this file makes
+# the build explicit. Set DATABASE_URL, SUPERFAN_SIGNING_SECRET,
+# SUPERFAN_ENCRYPTION_KEY and NEXT_PUBLIC_APP_URL in the site's environment.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
